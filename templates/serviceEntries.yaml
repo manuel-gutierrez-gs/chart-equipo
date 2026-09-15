@@ -1,0 +1,43 @@
+{{/*
+ServiceEntry(s) de Istio para permitir la SALIDA (egress) del mesh a hosts externos.
+
+Por qué: en un mesh con outboundTrafficPolicy=REGISTRY_ONLY, el sidecar Envoy manda al
+BlackHoleCluster (respuesta 502) cualquier host externo que NO tenga un ServiceEntry en su
+registro. Declarar el host como MESH_EXTERNAL (resolution DNS) es lo que permite que los pods
+del namespace salgan a ese destino.
+
+Cómo: una entrada por cada host en `global.egress`. El template itera la lista, así que añadir o
+quitar destinos externos solo toca el values (no este fichero).
+
+IMPORTANTE:
+  - Default `global.egress: []` => NO se renderiza ningún ServiceEntry. Es seguro dejarlo vacío:
+    no rompe los despliegues actuales ni exige permisos extra.
+  - Al declarar un host, el `helm upgrade` intentará crear el ServiceEntry con las credenciales
+    del despliegue (SA del deploy). Ese SA necesita RBAC sobre `serviceentries.networking.istio.io`
+    en el namespace; si no lo tiene, el release fallará con `Forbidden`. Ese permiso lo concede
+    plataforma (RoleBinding al ClusterRole admin, o grant específico de serviceentries).
+  - El nombre del recurso deriva del host (los puntos se sustituyen por guiones) para que sea un
+    nombre de recurso válido y estable.
+
+Ejemplo de entrada en values (global.egress):
+  - host: terminologias-des.pre.sas.junta-andalucia.es
+    port: 80
+    protocol: HTTP
+*/}}
+{{- range .Values.global.egress }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: {{ printf "egress-%s" (.host | replace "." "-") }}
+  namespace: {{ $.Values.global.nameSpace }}
+spec:
+  hosts:
+    - {{ .host | quote }}
+  location: MESH_EXTERNAL
+  resolution: DNS
+  ports:
+    - number: {{ .port }}
+      name: {{ printf "%s-%v" (.protocol | lower) .port }}
+      protocol: {{ .protocol }}
+{{- end }}

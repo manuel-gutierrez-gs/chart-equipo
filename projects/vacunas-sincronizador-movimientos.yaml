@@ -1,0 +1,52 @@
+spec:
+  name: "vacunas-sincronizador-movimientos"
+  version: "1.0.0"
+  image:
+    pullPolicy: "IfNotPresent"
+    name: "vacunas-sincronizador-movimientos"
+  replicaCount: 1
+  usage_level: low
+  autoscaling:
+    enabled: false
+  service:
+    port: 9080
+    sas_monitoring: false
+  container:
+    port: 9080
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  ingress:
+    enabled: true
+    host: "vacunas-sincronizador-movimientos.oc-vacunas.10.200.201.76.nip.io"
+    gateway: oc-vacunas-gateway
+  trafficManagement:
+    ruleSet:
+      - name: "route-to-openapi"
+        prefix: "/vacunas-sincronizador-movimientos/openapi"
+        urlRewrite: "/openapi"
+      - name: "route-to-openapi-absoluto"
+        # Sin urlRewrite a proposito: la Swagger UI redirige a /openapi/ui/ y pide /openapi
+        # con ruta absoluta, ya sin el prefijo del micro. Esta regla las acepta tal cual.
+        prefix: "/openapi"
+        urlRewrite: ""
+      - name: "route-to-metrics"
+        prefix: "/vacunas-sincronizador-movimientos/metrics"
+        urlRewrite: "/metrics"
+      - name: "route-to-health"
+        prefix: "/vacunas-sincronizador-movimientos/health"
+        urlRewrite: "/health"
+      - name: "route-to-service"
+        prefix: "/vacunas-sincronizador-movimientos/api/v1"
+        urlRewrite: "/api/v1"
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    secrets: ~

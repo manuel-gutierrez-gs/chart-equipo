@@ -1,0 +1,38 @@
+spec:
+  name: indicadores-vacunacion-api
+  version: "1.0.0"
+  image:
+    pullPolicy: IfNotPresent
+    name: indicadores-vacunacion-api
+  replicaCount: 1
+  usage_level: low
+  autoscaling:
+    enabled: false
+  service:
+    port: 9080
+    sas_monitoring: false
+  container:
+    port: 9080
+  ingress:
+    enabled: true
+    host: "indicadores-vacunacion-api.oc-vacunas.10.200.201.76.nip.io"
+    gateway: oc-vacunas-gateway
+  trafficManagement:
+    ruleSet:
+      - name: route-to-openapi
+        prefix: /openapi
+        urlRewrite: /openapi
+      - name: route-to-metrics
+        prefix: /indicadores-vacunacion-api/metrics
+        urlRewrite: /metrics
+      - name: route-to-health
+        prefix: /indicadores-vacunacion-api/health
+        urlRewrite: /health
+      - name: route-to-service
+        prefix: /indicadores-vacunacion-api/api/v1
+        urlRewrite: /api/v1
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:

@@ -1,0 +1,99 @@
+{{ $namespace := .Release.Namespace }}
+{{ $global := .Values.global }}
+
+{{/* Definir specs por defecto con valores seguros */}}
+{{ $defaultSpecMicroservicio := .Values.microservicio.spec | default dict }}
+{{ $defaultSpecFront := (.Values.front.spec | default dict) }}
+{{ $defaultSpecApi := (.Values.api.spec | default dict) }}
+
+{{- range $project := .Values.projects }}
+  {{- /* Validar que el proyecto tenga la estructura mínima requerida */ -}}
+  {{- if not $project.configFile }}
+    {{- fail "Error: project.configFile is required" }}
+  {{- end }}
+  
+  {{- if not $project.spec }}
+    {{- fail "Error: project.spec is required" }}
+  {{- end }}
+  
+  {{- if not $project.spec.type }}
+    {{- fail "Error: project.spec.type is required" }}
+  {{- end }}
+
+  {{- /* Se obtiene el valor de configFile y se busca el fichero indicado */ -}}
+  {{ $file := $.Files.Get $project.configFile }}
+  
+  {{- /* Validar que el archivo existe */ -}}
+  {{- if not $file }}
+    {{- fail (printf "Error: Configuration file not found: %s" $project.configFile) }}
+  {{- end }}
+  
+  {{- /* Se lee el fichero y se transforma su contenido en un YAML */ -}}
+  {{ $deploy := ($file | fromYaml) | default dict }}
+  
+  {{- /* Inicializar prespec con un diccionario vacío */ -}}
+  {{ $prespec := dict }}
+  
+  {{- /* Seleccionar el spec base según el tipo y hacer merge */ -}}
+  {{- if eq $project.spec.type "microservicio" }}
+    {{ $prespec = merge ($deploy.spec | default dict) $defaultSpecMicroservicio $global }}
+  {{- else if eq $project.spec.type "front" }}
+    {{ $prespec = merge ($deploy.spec | default dict) $defaultSpecFront $global }}
+  {{- else if eq $project.spec.type "api" }}
+    {{ $prespec = merge ($deploy.spec | default dict) $defaultSpecApi $global }}
+  {{- else }}
+    {{- fail (printf "Error: Unknown project type: %s" $project.spec.type) }}
+  {{- end }}
+  
+  {{- /* Hacer merge final con la configuración específica del proyecto */ -}}
+  {{ $spec := merge $project.spec $prespec }}
+  
+  {{- /* Validar campos requeridos */ -}}
+  {{- if not $spec.name }}
+    {{- fail "Error: spec.name is required" }}
+  {{- end }}
+  
+  {{- if not $spec.image }}
+    {{- fail "Error: spec.image is required" }}
+  {{- end }}
+  
+  {{- if not $spec.image.name }}
+    {{- fail "Error: spec.image.name is required" }}
+  {{- end }}
+  
+  {{- /* Construir la imagen */ -}}
+  {{ $imageBase := printf "%s:%s" $spec.image.name ($spec.imageTag | default "latest") }}
+  {{ $imagePath := printf "%s/%s/%s" $global.registry.dns $global.registry.path $imageBase }}
+  
+  {{- /* Se define el diccionario para pasarlo como contexto */ -}}
+  {{ $pkg := dict "Generic" $spec "namespace" $namespace "imagePath" $imagePath }}
+  
+  {{- /* Generar recursos según la configuración */ -}}
+  {{- if $spec.environment }}
+    {{- if $spec.environment.configMap }}
+      {{- include "generic.ConfigMap" $pkg }}
+    {{- end }}
+    {{- if $spec.environment.secrets }}
+      {{- include "generic.Secret" $pkg }}
+    {{- end }}
+  {{- end }}
+  
+  {{- include "generic.Service" $pkg }}
+  {{- include "generic.Deployment" $pkg }}
+  
+  {{- if and $spec.autoscaling $spec.autoscaling.enabled }}
+    {{- include "generic.HorizontalPodAutoscaler" $pkg }}
+  {{- end }}
+  
+  {{- if and $spec.ingress $spec.ingress.enabled }}
+    {{- include "generic.istio.VirtualService" $pkg }}
+  {{- end }}
+  
+  {{- if and $spec.authentication $spec.authentication.enabled }}
+    {{- include "generic.istio.RequestAuthentication" $pkg }}
+  {{- end }}
+  
+  {{- if and $spec.authorization $spec.authorization.enabled }}
+    {{- include "generic.istio.AuthorizationPolicy" $pkg }}
+  {{- end }}
+{{- end }}

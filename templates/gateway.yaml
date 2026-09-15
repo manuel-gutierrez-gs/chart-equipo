@@ -1,0 +1,39 @@
+{{/*
+Gateway Istio para oc-vacunas.
+
+Itera todos los projects con ingress.enabled=true y ingress.host definido,
+para que al añadir/quitar micros con exposición externa el Gateway crezca
+automáticamente sin tocar este fichero.
+
+CRÍTICO: si el host del proyecto no aparece en spec.servers[0].hosts del
+Gateway, Istio rechaza el tráfico con 404. Por eso esta plantilla NUNCA debe
+hard-codear hosts: SIEMPRE itera projects[*].spec.ingress.host.
+
+Solo se crea si hay al menos un project externo (para evitar Gateway vacío
+que algunos charts validan y rechazan).
+*/}}
+{{- $externalHosts := list -}}
+{{- range .Values.projects -}}
+  {{- if and .spec .spec.ingress .spec.ingress.enabled .spec.ingress.host -}}
+    {{- $externalHosts = append $externalHosts .spec.ingress.host -}}
+  {{- end -}}
+{{- end -}}
+{{- if $externalHosts }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: oc-vacunas-gateway
+  namespace: {{ .Values.global.nameSpace }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+{{- range $externalHosts | uniq | sortAlpha }}
+        - {{ . | quote }}
+{{- end }}
+      port:
+        number: 80
+        name: http
+        protocol: HTTP
+{{- end }}

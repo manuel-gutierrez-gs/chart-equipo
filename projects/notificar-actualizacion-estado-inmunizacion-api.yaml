@@ -1,0 +1,44 @@
+spec:
+  name: "notificar-actualizacion-estado-inmunizacion-api"
+  version: "1.0.0"
+  image:
+    pullPolicy: "IfNotPresent"
+    name: "notificar-actualizacion-estado-inmunizacion-api"
+    tag: "0.0.0.1"
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+  service:
+    port: 9080
+  container:
+    port: 9080
+  ingress:
+    enabled: true
+    host: "notificar-actualizacion-estado-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io"
+    gateway: oc-vacunas-gateway
+  trafficManagement:
+    ruleSet:
+      - name: "route-to-openapi"
+        prefix: "/notificar-actualizacion-estado-inmunizacion-api/openapi"
+        urlRewrite: "/openapi"
+      - name: "route-to-openapi-absoluto"
+        # Sin urlRewrite a proposito: la Swagger UI redirige a /openapi/ui/ y pide /openapi
+        # con ruta absoluta, ya sin el prefijo del micro. Esta regla las acepta tal cual.
+        prefix: "/openapi"
+        urlRewrite: ""
+      - name: "route-to-metrics"
+        prefix: "/notificar-actualizacion-estado-inmunizacion-api/metrics"
+        urlRewrite: "/metrics"
+      - name: "route-to-health"
+        prefix: "/notificar-actualizacion-estado-inmunizacion-api/health"
+        urlRewrite: "/health"
+      - name: "route-to-service"
+        prefix: "/notificar-actualizacion-estado-inmunizacion-api/api/v1"
+        urlRewrite: "/api/v1"
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    configMap: ~

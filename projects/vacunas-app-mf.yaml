@@ -1,0 +1,41 @@
+spec:
+  name: "vacunas-app-mf"
+  version: "1.0.2"
+  image:
+    pullPolicy: "IfNotPresent"
+    name: "vacunas-app-mf"
+    tag: "1.0.2.2"
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+  # El chart umbrella exige resources.requests/limits en el template del
+  # Deployment. Sin esto: "nil pointer evaluating interface {}.cpu" al
+  # renderizar. nginx sirviendo estaticos no consume casi nada — minimos
+  # razonables para un container alpine + nginx con SPA cargada.
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+  service:
+    port: 8080
+  container:
+    port: 8080
+  ingress:
+    enabled: true
+    host: "vacunas-app-mf.oc-vacunas.10.200.201.76.nip.io"
+    gateway: oc-vacunas-gateway
+  trafficManagement:
+    ruleSet:
+      - name: "route-to-service"
+        prefix: ""
+        urlRewrite: ""
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    configMap: ~

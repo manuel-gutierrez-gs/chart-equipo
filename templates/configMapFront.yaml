@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-front
+data:
+ environments-configmap.json: {{ .Values.configMapFront | quote }}
+{{- if .Values.configMapFrontExtra }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-front-extra
+data:
+ config-maps.json: {{ .Values.configMapFrontExtra | quote }}
+{{- end }}

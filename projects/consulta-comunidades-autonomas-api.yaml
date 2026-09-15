@@ -1,0 +1,42 @@
+spec:
+  name: "consulta-comunidades-autonomas-api"
+  version: "1.0.1"
+  image:
+    pullPolicy: "IfNotPresent"
+    name: "consulta-comunidades-autonomas-api"
+    tag: "1.0.1.2"
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+  service:
+    port: 9080
+  container:
+    port: 9080
+  ingress:
+    enabled: true
+  trafficManagement:
+    ruleSet:
+    - name: "route-to-openapi"
+      prefix: "/consulta-comunidades-autonomas-api/openapi"
+      urlRewrite: "/openapi"
+    - name: "route-to-openapi-absoluto"
+      # Sin urlRewrite a proposito: la Swagger UI redirige a /openapi/ui/ y pide /openapi
+      # con ruta absoluta, ya sin el prefijo del micro. Esta regla las acepta tal cual.
+      prefix: "/openapi"
+      urlRewrite: ""
+    - name: "route-to-metrics"
+      prefix: "/consulta-comunidades-autonomas-api/metrics"
+      urlRewrite: "/metrics"
+    - name: "route-to-health"
+      prefix: "/consulta-comunidades-autonomas-api/health"
+      urlRewrite: "/health"
+    - name: "route-to-service"
+      prefix: "/consulta-comunidades-autonomas-api/api/v1"
+      urlRewrite: "/api/v1"
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    configMap: ~

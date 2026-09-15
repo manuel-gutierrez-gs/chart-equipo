@@ -1,0 +1,20 @@
+spec:
+  name: lotes-inventario-ingesta-api
+  version: "develop-0"
+  image:
+    pullPolicy: Always
+    name: lotes-inventario-ingesta-api
+  replicaCount: 1
+  usage_level: low
+  autoscaling:
+    enabled: false
+  service:
+    sas_monitoring: false
+  ingress:
+    # El micro es un consumer puro de Kafka, no expone REST. Sin VirtualService.
+    enabled: false
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:

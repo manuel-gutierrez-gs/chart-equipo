@@ -1,0 +1,42 @@
+spec:
+  name: "consulta-vacunaciones-sivain-global-api"
+  version: "1.0.0"
+  image:
+    pullPolicy: "IfNotPresent"
+    name: "consulta-vacunaciones-sivain-global-api"
+    tag: "1.0.0.2"
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+  service:
+    port: 9080
+  container:
+    port: 9080
+  ingress:
+    enabled: true
+  trafficManagement:
+    ruleSet:
+      - name: "route-to-openapi"
+        prefix: "/consulta-vacunaciones-sivain-global-api/openapi"
+        urlRewrite: "/openapi"
+      - name: "route-to-openapi-absoluto"
+        # Sin urlRewrite a proposito: la Swagger UI redirige a /openapi/ui/ y pide /openapi
+        # con ruta absoluta, ya sin el prefijo del micro. Esta regla las acepta tal cual.
+        prefix: "/openapi"
+        urlRewrite: ""
+      - name: "route-to-metrics"
+        prefix: "/consulta-vacunaciones-sivain-global-api/metrics"
+        urlRewrite: "/metrics"
+      - name: "route-to-health"
+        prefix: "/consulta-vacunaciones-sivain-global-api/health"
+        urlRewrite: "/health"
+      - name: "route-to-service"
+        prefix: "/consulta-vacunaciones-sivain-global-api/api/v1"
+        urlRewrite: "/api/v1"
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    configMap: ~

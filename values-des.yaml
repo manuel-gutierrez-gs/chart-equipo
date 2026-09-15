@@ -1,0 +1,1415 @@
+global:
+  registry:
+    dns: solutia.azurecr.io
+    path: oc-vacunas
+  ingress:
+    gateway: oc-vacunas-gateway
+    headers: null
+  developDeployment: true
+  nameSpace: oc-vacunas
+  imagePullSecret: solutia-acr-pull
+  egress: []
+microservicio:
+  spec:
+    environment:
+      configMap:
+        MP_JWT_VERIFY_PUBLICKEY_LOCATION: A_RELLENAR_POR_CTI
+        MP_JWT_VERIFY_ISSUER: A_RELLENAR_POR_CTI
+    authentication:
+      jwt:
+        issuer: A_RELLENAR_POR_CTI
+        jwksUri: A_RELLENAR_POR_CTI
+    replicaCount: 1
+    ingress:
+      enabled: false
+    usageSpec:
+      low:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 400Mi
+          limits:
+            cpu: 600m
+            memory: 800Mi
+      medium:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 600Mi
+          limits:
+            cpu: '1'
+            memory: 1Gi
+      high:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 600Mi
+          limits:
+            cpu: '2'
+            memory: 1500Mi
+        autoscaling:
+          minReplicas: 1
+          maxReplicas: 3
+          targetCPUUtilizationValue: 700m
+          targetMemoryUtilizationValue: 800Mi
+    service:
+      port: 9080
+    container:
+      port: 9080
+    readinessProbe:
+      httpGet:
+        path: /health/ready
+        port: 9080
+      initialDelaySeconds: 60
+      timeoutSeconds: 30
+      periodSeconds: 60
+      failureThreshold: 6
+    livenessProbe:
+      httpGet:
+        path: /health/live
+        port: 9080
+      initialDelaySeconds: 60
+      timeoutSeconds: 30
+      periodSeconds: 60
+projects:
+- configFile: projects/accion-vacunal-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_LOCATION: /opt/certs/aks-kafka-cluster-ca-cert.crt
+        ACCIONES_TOPIC: acciones-vacunales-topic
+      secretRefs:
+      - movimientos-kafka-secret
+      secrets:
+        DB_URL_AV: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_AV: APP_VAC_ACCIONES_VACUNALES
+        DB_PASSWORD_AV: APP_VAC_ACCIONES_VACUNALES
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_ACCIONES_VACUNALES
+        DB_PASSWORD: APP_VAC_ACCIONES_VACUNALES
+    podAnnotations:
+      traffic.sidecar.istio.io/excludeOutboundPorts: '9093'
+    volumeMounts:
+    - name: kafka-ca-volume
+      mountPath: /opt/certs/aks-kafka-cluster-ca-cert.crt
+      readOnly: true
+      subPath: aks-kafka-cluster-ca-cert.crt
+    volumes:
+    - name: kafka-ca-volume
+      secret:
+        secretName: movimientos-kafka-ca-secret
+        items:
+        - key: aks-kafka-cluster-ca-cert.crt
+          path: aks-kafka-cluster-ca-cert.crt
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.2.1-SNAPSHOT
+- configFile: projects/calendario-vacunal-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_CALENDARIOS
+        DB_PASSWORD: APP_VAC_CALENDARIOS
+    replicaCount: '1'
+    imageTag: 1.0.2.1
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-comunidades-autonomas-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-comunidades-autonomas-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        comunidades_autonomas_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
+        comunidades_autonomas_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/codesystem/comunidades_autonomas
+        comunidades_autonomas_cache_enabled: true
+        comunidades_autonomas_cache_ttl: PT24H
+        comunidades_autonomas_cache_max_entries: 50
+      secrets:
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.2
+- configFile: projects/configuracion-de-paciente-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        calendarios_client_mp_rest_url: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        criterios_client_mp_rest_url: http://criterios-vacunacion-paciente-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        pacientes_client_mp_rest_url: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+      secrets:
+        DB_URL_CP: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_CP: APP_VAC_CONFIG_PACIENTES
+        DB_PASSWORD_CP: APP_VAC_CONFIG_PACIENTES
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_CONFIG_PACIENTES
+        DB_PASSWORD: APP_VAC_CONFIG_PACIENTES
+    replicaCount: '1'
+    imageTag: 1.0.3.1-SNAPSHOT
+    image:
+      pullPolicy: Always
+- configFile: projects/contraindicaciones-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_COIN: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_COIN: APP_VAC_CONTRAINDICACIONES
+        DB_PASSWORD_COIN: APP_VAC_CONTRAINDICACIONES
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_CONTRAINDICACIONES
+        DB_PASSWORD: APP_VAC_CONTRAINDICACIONES
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.2.1
+- configFile: projects/criterios-vacunacion-paciente-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_CR: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_CR: APP_VAC_CRITERIOS
+        DB_PASSWORD_CR: APP_VAC_CRITERIOS
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_CRITERIOS
+        DB_PASSWORD: APP_VAC_CRITERIOS
+    replicaCount: '1'
+    imageTag: 1.0.2.1
+    image:
+      pullPolicy: Always
+- configFile: projects/ficha-vacunal-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        acciones_vacunales_client_mp_rest_url: http://accion-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        propuestas_vacunales_client_mp_rest_url: http://propuesta-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
+        FICHA_VACUNAL_FECHA_MINIMA_APARICION: 2010-01-01
+        FICHA_VACUNAL_DIAS_LIMITE_FUERA_PLAZO_VACUNAS_RANGO_ANOS: 381
+        FICHA_VACUNAL_DIAS_LIMITE_FUERA_PLAZO_VACUNAS_RANGO_MESES: 16
+        FICHA_VACUNAL_MAX_RANGO_MESES: 12
+        pacientes_client_mp_rest_url: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+      secrets:
+        usuario_generico_vacunas_diraya_code: 7269110
+        usuario_generico_vacunas_login: usugenvac
+        usuario_generico_vacunas_modulo_maco: 257
+        usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.1-SNAPSHOT
+- configFile: projects/vacunas-app-mf.yaml
+  spec:
+    replicaCount: 1
+    type: front
+    ingress:
+      enabled: true
+      host: vacunas-app-mf.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        URL_API_ACCIONES_VACUNALES: http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1
+        URL_API_CONFIG_PACIENTES: http://configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io/configuracion-de-paciente-api/api/v1
+        URL_API_FICHA_VACUNAL: http://ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io/ficha-vacunal-api/api/v1
+        URL_API_CONFIG_CALENDARIOS: http://calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io/calendario-vacunal-api/api/v1
+        URL_API_REACCIONES_ADVERSAS: http://reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io/reacciones-adversas-api/api/v1
+        URL_API_CONTRAINDICACIONES: http://contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/contraindicaciones-api/api/v1
+        URL_API_PRODUCTOS_INMUNIZACION: http://consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io/consulta-productos-inmunizacion-api/api/v1
+        URL_API_CRITERIO: http://criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io/criterios-vacunacion-paciente-api/api/v1
+    volumeMounts:
+    - name: config-volume
+      mountPath: /usr/share/nginx/html/environments-configmap.json
+      subPath: environments-configmap.json
+    - name: config-volume-extra
+      mountPath: /usr/share/nginx/html/config-maps.json
+      subPath: config-maps.json
+    volumes:
+    - name: config-volume
+      configMap:
+        name: config-map-front
+    - name: config-volume-extra
+      configMap:
+        name: config-map-front-extra
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.2.11-fix-historico
+- configFile: projects/indicadores-vacunacion-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationValue: 500m
+      targetMemoryUtilizationValue: 500Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: indicadores-vacunacion-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        acciones_vacunales_client_mp_rest_url: http://accion-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        pacientes_client_mp_rest_url: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        propuestas_vacunales_client_mp_rest_url: http://propuesta-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        configuracion_pacientes_client_mp_rest_url: http://configuracion-de-paciente-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+      secrets: null
+    replicaCount: '1'
+    imageTag: 1.0.0.1-SNAPSHOT
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-alergias-contraindicaciones-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-alergias-contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        s039_endpoint: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S039.cls
+        macoAuth_pre_endpoint: http://maco.diraya.des/wscentralizada/WsValidacion.asmx
+      secrets:
+        usuario_generico_vacunas_login: usugenvac
+        usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+        usuario_generico_vacunas_modulo_maco: 257
+        usuario_generico_vacunas_diraya_code: 7269110
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.2
+- configFile: projects/tipos-lotes-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: tipos-lotes-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        MOVIMIENTOS_CLIENT_MP_REST_BASE_URL: http://vacunas-movimientos-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        MARCAS_CLIENT_MP_REST_URL: http://consulta-marcas-comerciales-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+      secrets:
+        DB_URL_LO: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_LO: APP_VAC_LOTES
+        DB_PASSWORD_LO: APP_VAC_LOTES
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_LOTES
+        DB_PASSWORD: APP_VAC_LOTES
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.1-SNAPSHOT
+- configFile: projects/consulta-marcas-comerciales-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_MC: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_MC: APP_VAC_MARCAS_COMERCIALES
+        DB_PASSWORD_MC: APP_VAC_MARCAS_COMERCIALES
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.2
+- configFile: projects/consulta-motivos-no-vacunacion-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-motivos-no-vacunacion-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        motivos_no_vacunacion_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=
+        motivos_no_vacunacion_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/SIVAIN_MOTIVOS_NO_VAC/$expand?includeDesignations=1
+        motivos_no_vacunacion_cache_enabled: true
+        motivos_no_vacunacion_cache_ttl: PT24H
+        motivos_no_vacunacion_cache_max_entries: 50
+      secrets:
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.2
+- configFile: projects/consulta-motivos-vacunacion-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-motivos-vacunacion-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        motivos_vacunacion_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=codigoSNOMEDCT
+        motivos_vacunacion_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/SIVAIN_MOTIVOS_VAC/$expand?includeDesignations=1
+        motivos_vacunacion_cache_enabled: true
+        motivos_vacunacion_cache_ttl: PT24H
+        motivos_vacunacion_cache_max_entries: 50
+      secrets:
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.2.0-SNAPSHOT
+- configFile: projects/consulta-pacientes-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: consulta-pacientes-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        usuario_generico_vacunas_diraya_code: 7269110
+        usuario_generico_vacunas_modulo_maco: 257
+        usuario_generico_vacunas_login: usugenvac
+        usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+      configMap:
+        bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
+        pacientes_cache_enabled: true
+        pacientes_cache_ttl: PT24H
+        pacientes_cache_max_entries: 50
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1-SNAPSHOT
+- configFile: projects/consulta-productos-inmunizacion-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_PI: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_PI: APP_VAC_PROD_INMUNIZACION
+        DB_PASSWORD_PI: APP_VAC_PROD_INMUNIZACION
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.2
+- configFile: projects/propuesta-vacunal-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: propuesta-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        calendarios_client_mp_rest_url: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        configuracion_pacientes_client_mp_rest_url: http://configuracion-de-paciente-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+      secrets: null
+    replicaCount: '1'
+    imageTag: 1.0.0.2
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-provincias-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-provincias-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_PROV: jdbc:oracle:thin:@10.200.128.5:1521/bd11r202
+        DB_USER_PROV: APP_VAC_ACCIONES_VACUNALES
+        DB_PASS_PROV: APP_VAC_ACCIONES_VACUNALES
+    replicaCount: '0'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.2
+- configFile: projects/reacciones-adversas-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_RA: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_RA: APP_VAC_REACCIONES_ADVERSAS
+        DB_PASSWORD_RA: APP_VAC_REACCIONES_ADVERSAS
+    replicaCount: '1'
+    imageTag: 1.0.2.3-SNAPSHOT
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-sexos-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-sexos-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        sexos_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=
+        sexos_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/900000201000122108/$expand?includeDesignations=1
+        sexos_terminologias_base_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
+        sexos_cache_enabled: true
+        sexos_cache_ttl: PT24H
+        sexos_cache_max_entries: 20
+      secrets:
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.2
+- configFile: projects/sincronizador-acciones-vacunales-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: sincronizador-acciones-vacunales-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_AV: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_AV: APP_VAC_ACCIONES_VACUNALES
+        DB_PASSWORD_AV: APP_VAC_ACCIONES_VACUNALES
+        usuario_generico_vacunas_diraya_code: 7269110
+        usuario_generico_vacunas_modulo_maco: 257
+        usuario_generico_vacunas_login: usugenvac
+        usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_ACCIONES_VACUNALES
+        DB_PASSWORD: APP_VAC_ACCIONES_VACUNALES
+        DB_LEGACY_URL: jdbc:oracle:thin:@//10.200.128.5:1521/bd11r202
+        DB_LEGACY_USER: APP_VACUNAS
+        DB_LEGACY_PASSWORD: APP_VACUNAS
+        DATABASE_URL: jdbc:oracle:thin:@//10.200.128.5:1521/bd11r202
+        DATABASE_USER: APP_VACUNAS
+        DATABASE_PASS: APP_VACUNAS
+        DATABASE_URLAV: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DATABASE_USERAV: APP_VAC_ACCIONES_VACUNALES
+        DATABASE_PASSAV: APP_VAC_ACCIONES_VACUNALES
+      configMap:
+        macoAuth_pre_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
+        SINCRONIZADOR_DIARIO_HORA: 1
+        SINCRONIZADOR_DIARIO_MINUTO: 0
+        SINCRONIZADOR_DIARIO_PERIODO_HORAS: 1
+        SINCRONIZADOR_DIARIO_PERIODO_MINUTOS: 2
+        SINCRONIZADOR_EJECUTAR_AL_ARRANCAR: true
+        SINCRONIZADOR_LEGACY_SCHEMA_VACUNAS: OWN_VACUNAS
+        SINCRONIZADOR_LEGACY_SCHEMA_ESTRUCTURA: REP_PRO_EST
+        SINCRONIZADOR_LEGACY_SCHEMA_BDU: REP_PRO_BDU
+        PACIENTES_CLIENT_MP_REST_URL: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080
+        PACIENTES_CLIENT_CONNECT_TIMEOUT_MS: 5000
+        PACIENTES_CLIENT_READ_TIMEOUT_MS: 25000
+        SINCRONIZADOR_PACIENTES_SUB_BATCH_SIZE: 200
+        SINCRONIZADOR_PACIENTES_MAX_PARALELISMO_SUB_BATCHES: 4
+        CALENDARIOS_CLIENT_MP_REST_URL: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080
+        CALENDARIOS_CLIENT_CONNECT_TIMEOUT_MS: 5000
+        CALENDARIOS_CLIENT_READ_TIMEOUT_MS: 15000
+        LOTES_CLIENT_MP_REST_URL: http://tipos-lotes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        LOTES_CLIENT_CONNECT_TIMEOUT_MS: 5000
+        LOTES_CLIENT_READ_TIMEOUT_MS: 15000
+        CONTRAINDICACIONES_CLIENT_MP_REST_URL: http://contraindicaciones-api-service.oc-vacunas.svc.cluster.local:9080
+        CONTRAINDICACIONES_CLIENT_CONNECT_TIMEOUT_MS: 5000
+        CONTRAINDICACIONES_CLIENT_READ_TIMEOUT_MS: 15000
+        REACCIONES_ADVERSAS_CLIENT_MP_REST_URL: http://reacciones-adversas-api-service.oc-vacunas.svc.cluster.local:9080
+        REACCIONES_ADVERSAS_CLIENT_CONNECT_TIMEOUT_MS: 5000
+        REACCIONES_ADVERSAS_CLIENT_READ_TIMEOUT_MS: 15000
+        SINCRONIZADOR_CONCURRENCIA_MAX_PERMITS: '4'
+        SINCRONIZADOR_PROCESAMIENTO_BATCH_SIZE: 10000
+        SINCRONIZADOR_CURSOR_BATCH_SIZE: '10000'
+        SINCRONIZADOR_TOPE_DURACION_MINUTOS: '120'
+        SINCRONIZADOR_VALIDACION_PACIENTE_REQUERIDO: false
+        SINCRONIZADOR_VALIDACION_CALENDARIO_REQUERIDO: false
+        SINCRONIZADOR_VALIDACION_PROFESIONAL_REQUERIDO: false
+        SINCRONIZADOR_VALIDACION_LOTE_REQUERIDO: false
+        SINCRONIZADOR_VALIDACION_CONTRAINDICACION_REQUERIDO: false
+        SINCRONIZADOR_VALIDACION_REACCION_REQUERIDO: false
+        SINCRONIZADOR_CARGA_LEGACY_TIMEOUT_SEGUNDOS: 120
+        SINCRONIZADOR_PROCESAMIENTO_TIMEOUT_SEGUNDOS: '180'
+        MACO_CONCURRENCIA_MAX_SOAP: 10
+        SINCRONIZADOR_PRECARGA_TIMEOUT_SEGUNDOS: '300'
+        MACO_WSDL_ENDPOINT: http://maco.diraya.des/wscentralizada/WsValidacion.asmx?wsdl
+        JAVA_TOOL_OPTIONS: -Declipselink.concurrency.manager.write.lock.manager.semaphore=true -Declipselink.concurrency.manager.object.building.semaphore=true -Declipselink.concurrency.manager.write.lock.manager.no.threads=2
+        RECONCILIACION_BLOQUES_ACTIVA: 'false'
+        SINCRONIZADOR_PRECARGA_PREFETCH_HABILITADO: 'true'
+        SINCRONIZADOR_PERSISTENCIA_LOTE_HABILITADO: 'true'
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1-SNAPSHOT
+- configFile: projects/vacunas-sincronizador-configuracion-pacientes.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    ingress:
+      enabled: true
+      host: vacunas-sincronizador-configuracion-pacientes.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DATABASE_URL: jdbc:oracle:thin:@//10.200.128.5:1521/bd11r202
+        DATABASE_USER: APP_VACUNAS
+        DATABASE_PASS: APP_VACUNAS
+        DATABASE_URLCP: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DATABASE_USERCP: APP_VAC_CONFIG_PACIENTES
+        DATABASE_PASSCP: APP_VAC_CONFIG_PACIENTES
+      configMap:
+        calendarios_client_mp_rest_url: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080
+        criterios_client_mp_rest_url: http://criterios-vacunacion-paciente-api-service.oc-vacunas.svc.cluster.local:9080
+        SINCRONIZADOR_NUMERO_REGISTROS: '30000'
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1-SNAPSHOT
+- configFile: projects/sincronizador-marcas-comerciales-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: sincronizador-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_MC: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_MC: APP_VAC_MARCAS_COMERCIALES
+        DB_PASSWORD_MC: APP_VAC_MARCAS_COMERCIALES
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_MARCAS_COMERCIALES
+        DB_PASSWORD: APP_VAC_MARCAS_COMERCIALES
+      configMap:
+        listados_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
+        hora_ejecucion: 1
+        minutos_ejecucion: 0
+        TERMINOLOGIA_CARGA_TIMEOUT_SEGUNDOS: 180
+        TERMINOLOGIA_CONCURRENCIA_MAX: 10
+        TERMINOLOGIA_TIMEOUT_SEGUNDOS: 30
+        TERMINOLOGIA_REINTENTOS_MAX: 2
+        TERMINOLOGIA_REINTENTO_DELAY_SEGUNDOS: 1
+        TERMINOLOGIA_CB_VOLUMEN_PETICIONES: 20
+        TERMINOLOGIA_CB_RATIO_FALLOS: 0.6
+        TERMINOLOGIA_CB_DELAY_SEGUNDOS: 30
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.2
+- configFile: projects/sincronizador-productos-inmunizacion-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 400m
+      targetMemoryUtilizationValue: 400Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: sincronizador-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL_PI: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_PI: APP_VAC_PROD_INMUNIZACION
+        DB_PASSWORD_PI: APP_VAC_PROD_INMUNIZACION
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_PROD_INMUNIZACION
+        DB_PASSWORD: APP_VAC_PROD_INMUNIZACION
+      configMap:
+        listados_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
+        hora_ejecucion: 1
+        minutos_ejecucion: 0
+        intervalo_ejecucion: 24
+        TERMINOLOGIA_CONCURRENCIA_MAX: 10
+        TERMINOLOGIA_TIMEOUT_SEGUNDOS: 30
+        TERMINOLOGIA_REINTENTOS_MAX: 3
+        TERMINOLOGIA_REINTENTO_DELAY_SEGUNDOS: 2
+        TERMINOLOGIA_REINTENTO_JITTER_MILLIS: 500
+        TERMINOLOGIA_CB_VOLUMEN_PETICIONES: 10
+        TERMINOLOGIA_CB_RATIO_FALLOS: 0.5
+        TERMINOLOGIA_CB_DELAY_SEGUNDOS: 30
+        TERMINOLOGIA_FANOUT_TIMEOUT_SEGUNDOS: 120
+        TERMINOLOGIA_PAGINACION_CONCURRENCIA: 5
+        TERMINOLOGIA_PAGINACION_PAGE_SIZE: 50
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.2
+- configFile: projects/enviar-ficheros-sivain-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: enviar-ficheros-sivain-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+      environment:
+        configMap:
+          s414_endpoint_url: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S414.cls
+          s414_action_url: http://sivain.mscbs.es/ws/cargarfichero/action
+          bdu_search_endpoint: http://ws-bdu-pre2.diraya-test.sspa.junta-andalucia.es/web_services/UsuarioBDU.wsdl?wsdl
+          maco_validation_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
+        secrets:
+          usuario_generico_vacunas_diraya_code: 7269110
+          usuario_generico_vacunas_modulo_maco: 257
+          usuario_generico_vacunas_login: usugenvac
+          usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+          usuario_generico_sivain_login: SIVAIN_INT_01_ibhzqvip01
+          DB_URL_SIVAIN: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+          DB_USER_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+          DB_PASSWORD_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+    environment:
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_CARGAS_FICHERO_SIVAIN
+        DB_PASSWORD: APP_VAC_CARGAS_FICHERO_SIVAIN
+        DB_URL_SIVAIN: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+        DB_PASSWORD_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+      configMap:
+        bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
+    replicaCount: '0'
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-ficheros-sivain-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-ficheros-sivain-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+      environment:
+        configMap:
+          s415_endpoint_url: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S415.cls
+          s415_action_url: http://sivain.mscbs.es/ws/consultarestadofichero/action
+          bdu_search_endpoint: http://ws-bdu-pre2.diraya-test.sspa.junta-andalucia.es/web_services/UsuarioBDU.wsdl?wsdl
+          maco_validation_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
+        secrets:
+          usuario_generico_vacunas_diraya_code: 7269110
+          usuario_generico_vacunas_modulo_maco: 257
+          usuario_generico_vacunas_login: usugenvac
+          usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+          usuario_generico_sivain_login: SIVAIN_INT_01_ibhzqvip01
+          DB_URL_SIVAIN: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+          DB_USER_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+          DB_PASSWORD_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+    environment:
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_CARGAS_FICHERO_SIVAIN
+        DB_PASSWORD: APP_VAC_CARGAS_FICHERO_SIVAIN
+        DB_URL_SIVAIN: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+        DB_PASSWORD_SIVAIN: APP_VAC_CARGAS_FICHERO_SIVAIN
+      configMap:
+        bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
+    replicaCount: '0'
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-vacunaciones-sivain-global-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: consulta-vacunaciones-sivain-global-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+      environment:
+        configMap:
+          s417_endpoint_url: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S417.cls
+          s417_action_url: http://sivain.mscbs.es/ws/consultardatosfinales/action
+          bdu_search_endpoint: http://ws-bdu-pre2.diraya-test.sspa.junta-andalucia.es/web_services/UsuarioBDU.wsdl?wsdl
+          maco_validation_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
+        secrets:
+          usuario_generico_vacunas_diraya_code: 7269110
+          usuario_generico_vacunas_modulo_maco: 257
+          usuario_generico_vacunas_login: usugenvac
+          usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+          usuario_generico_sivain_login: SIVAIN_INT_01_ibhzqvip01
+    environment:
+      configMap:
+        bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
+    replicaCount: '0'
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-vacunaciones-sivain-andalucia-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 768Mi
+    ingress:
+      enabled: true
+      host: consulta-vacunaciones-sivain-andalucia-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        s416_endpoint_url: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S416.cls
+        s416_action_url: http://sivain.mscbs.es/ws/consultardatosorigen/action
+        bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
+        maco_validation_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
+      secrets:
+        usuario_generico_vacunas_diraya_code: 7269110
+        usuario_generico_vacunas_modulo_maco: 257
+        usuario_generico_vacunas_login: usugenvac
+        usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+        usuario_generico_sivain_login: SIVAIN_INT_01_ibhzqvip01
+    replicaCount: '0'
+    image:
+      pullPolicy: Always
+- configFile: projects/consulta-vias-administracion-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 3
+      targetCPUUtilizationValue: 700m
+      targetMemoryUtilizationValue: 700Mi
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: consulta-vias-administracion-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        vias_administracion_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=
+        vias_administracion_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/SIVAIN_VIAS_ADMINISTRACION/$expand?includeDesignations=1
+        vias_administracion_cache_enabled: true
+        vias_administracion_cache_ttl: PT24H
+        vias_administracion_cache_max_entries: 20
+      secrets:
+        api_key: ccdffaa9f38e11efbbbe021dd8b721e2
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.1.2
+- configFile: projects/lotes-inventario-ingesta-api.yaml
+  spec:
+    type: microservicio
+    imageTag: 1.0.0.1-SNAPSHOT
+    environment:
+      configMap:
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_LOCATION: /opt/certs/aks-kafka-cluster-ca-cert.crt
+        INVENTARIO_LOTES_CLIENT_URL: http://tipos-lotes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1/lotes
+        INVENTARIO_MARCAS_CLIENT_URL: http://consulta-marcas-comerciales-api-service.oc-vacunas.svc.cluster.local:9080/api/v1/marcas-comerciales
+      secretRefs:
+      - movimientos-kafka-secret
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_INVENTARIO_LOTES
+        DB_PASSWORD: APP_VAC_INVENTARIO_LOTES
+        DB_DEFAULT_SCHEMA: OWN_VAC_INVENTARIO_LOTES
+    podAnnotations:
+      checksum/kafka-ca: from-movimientos-kafka-ca-secret
+      traffic.sidecar.istio.io/excludeOutboundPorts: '9093'
+    volumeMounts:
+    - name: kafka-ca-volume
+      mountPath: /opt/certs/aks-kafka-cluster-ca-cert.crt
+      readOnly: true
+      subPath: aks-kafka-cluster-ca-cert.crt
+    volumes:
+    - name: kafka-ca-volume
+      secret:
+        secretName: movimientos-kafka-ca-secret
+        items:
+        - key: aks-kafka-cluster-ca-cert.crt
+          path: aks-kafka-cluster-ca-cert.crt
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+- configFile: projects/vacunas-movimientos.yaml
+  spec:
+    type: microservicio
+    imageTag: 1.0.0.1-SNAPSHOT
+    environment:
+      configMap:
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_LOCATION: /opt/certs/aks-kafka-cluster-ca-cert.crt
+        MOVIMIENTOS_TOPIC: movimientos-topic
+        LOTES_CLIENT_MP_REST_URL: http://tipos-lotes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
+        MOVIMIENTOS_MARCAS_CLIENT_URL: http://consulta-marcas-comerciales-api-service.oc-vacunas.svc.cluster.local:9080/api/v1/marcas-comerciales
+      secretRefs:
+      - movimientos-kafka-secret
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: OWN_VAC_MOVIMIENTOS
+        DB_PASSWORD: OWN_VAC_MOVIMIENTOS
+        DB_DEFAULT_SCHEMA: OWN_VAC_MOVIMIENTOS
+    podAnnotations:
+      traffic.sidecar.istio.io/excludeOutboundPorts: '9093'
+    volumeMounts:
+    - name: kafka-ca-volume
+      mountPath: /opt/certs/aks-kafka-cluster-ca-cert.crt
+      readOnly: true
+      subPath: aks-kafka-cluster-ca-cert.crt
+    volumes:
+    - name: kafka-ca-volume
+      secret:
+        secretName: movimientos-kafka-ca-secret
+        items:
+        - key: aks-kafka-cluster-ca-cert.crt
+          path: aks-kafka-cluster-ca-cert.crt
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+- configFile: projects/notificar-actualizacion-estado-inmunizacion-api.yaml
+  spec:
+    type: microservicio
+    imageTag: 1.0.0.1-SNAPSHOT
+    environment:
+      configMap:
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
+        MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_LOCATION: /opt/certs/aks-kafka-cluster-ca-cert.crt
+        KAFKA_ACCIONES_TOPIC: acciones-vacunales-topic
+        PACIENTES_CLIENT_MP_REST_URL: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080/consulta-pacientes-api/api/v1/paciente?nuhsa=
+        macoAuth_pre_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
+        s003_endpoint: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S003.cls
+      secretRefs:
+      - movimientos-kafka-secret
+      secrets:
+        S003_DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        S003_DB_USER: OWN_VAC_ACT_EST_INMUNIZACION
+        S003_DB_PASSWORD: OWN_VAC_ACT_EST_INMUNIZACION
+        usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
+    podAnnotations:
+      traffic.sidecar.istio.io/excludeOutboundPorts: '9093'
+    volumeMounts:
+    - name: kafka-ca-volume
+      mountPath: /opt/certs/aks-kafka-cluster-ca-cert.crt
+      readOnly: true
+      subPath: aks-kafka-cluster-ca-cert.crt
+    volumes:
+    - name: kafka-ca-volume
+      secret:
+        secretName: movimientos-kafka-ca-secret
+        items:
+        - key: aks-kafka-cluster-ca-cert.crt
+          path: aks-kafka-cluster-ca-cert.crt
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 384Mi
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+- configFile: projects/vacunas-estructura-api.yaml
+  spec:
+    type: microservicio
+    imageTag: 1.0.0.1
+    ingress:
+      enabled: true
+      host: vacunas-estructura-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DATABASE_URL: jdbc:oracle:thin:@10.200.128.5:1521/bd11r202
+        DATABASE_USER: APP_VACUNAS
+        DATABASE_PASS: APP_VACUNAS
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 125m
+        memory: 256Mi
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+- configFile: projects/lotes-inventario-api.yaml
+  spec:
+    type: microservicio
+    imageTag: 1.0.0.1
+    ingress:
+      enabled: true
+      host: lotes-inventario-api.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_INVENTARIO_LOTES
+        DB_PASSWORD: APP_VAC_INVENTARIO_LOTES
+        DB_URL_IL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER_IL: APP_VAC_INVENTARIO_LOTES
+        DB_PASSWORD_IL: APP_VAC_INVENTARIO_LOTES
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 125m
+        memory: 256Mi
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+- configFile: projects/vacunas-sincronizador-lotes.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+    resources:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    ingress:
+      enabled: true
+      host: vacunas-sincronizador-lotes.oc-vacunas.10.200.201.76.nip.io
+      gateway: oc-vacunas-gateway
+    environment:
+      secrets:
+        DATABASE_URL: jdbc:oracle:thin:@//10.200.128.5:1521/bd11r202
+        DATABASE_USER: APP_VACUNAS
+        DATABASE_PASS: APP_VACUNAS
+        DATABASE_URLL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DATABASE_USERL: APP_VAC_LOTES
+        DATABASE_PASSL: APP_VAC_LOTES
+      configMap:
+        SINCRONIZADOR_EJECUTARALARRANCAR: 'true'
+        SINCRONIZADOR_DIARIO_HORA: '1'
+        SINCRONIZADOR_DIARIO_MINUTO: '0'
+        SINCRONIZADOR_DIARIO_PERIODOMINUTOS: '1'
+        SINCRONIZADOR_DIARIO_BATCHSIZELOTESPROPIOS: '5000'
+        SINCRONIZADOR_DIARIO_CHUNKSIZELOTESPROPIOS: '500'
+        SINCRONIZADOR_DIARIO_MAXCONCURRENTTHREADSLOTESPROPIOS: '30'
+        SINCRONIZADOR_DIARIO_BATCHSIZELOTESEXTERNOS: '5000'
+        SINCRONIZADOR_DIARIO_CHUNKSIZELOTESEXTERNOS: '500'
+        SINCRONIZADOR_DIARIO_MAXCONCURRENTTHREADSLOTESEXTERNOS: '30'
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1-SNAPSHOT
+- configFile: projects/vacunas-sincronizador-movimientos.yaml
+  spec:
+    type: microservicio
+    environment:
+      secrets:
+        DATABASE_URL: jdbc:oracle:thin:@10.200.128.5/bd11r202
+        DATABASE_USER: APP_VACUNAS
+        DATABASE_PASS: APP_VACUNAS
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: OWN_VAC_MOVIMIENTOS
+        DB_PASSWORD: OWN_VAC_MOVIMIENTOS
+      configMap:
+        WLP_LOGGING_CONSOLE_LOGLEVEL: INFO
+    replicaCount: '1'
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1-SNAPSHOT
+front:
+  spec: {}
+api:
+  spec: {}
+configMapFront: "{\n  \"urlApiLotes\": \"http://tipos-lotes-api.oc-vacunas.10.200.201.76.nip.io/tipos-lotes-api/api/v1\",\n  \"urlApiAlergiasYContraindicacionesS039\": \"http://consulta-alergias-contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/consulta-alergias-contraindicaciones-api/api/v1\",\n  \"urlApiConfigAccionVacunal\": \"http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1\",\n  \"urlApiConfigCalendarios\": \"http://calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io/calendario-vacunal-api/api/v1\",\n  \"urlApiConfigPacientes\": \"http://configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io/configuracion-de-paciente-api/api/v1\",\n  \"urlApiContraindicaciones\": \"http://contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/contraindicaciones-api/api/v1\",\n  \"urlApiCriterio\": \"http://criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io/criterios-vacunacion-paciente-api/api/v1\",\n  \"urlApiFichaVacunal\": \"http://ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io/ficha-vacunal-api/api/v1\",\n  \"urlApiInventarioLotes\": \"http://lotes-inventario-api.oc-vacunas.10.200.201.76.nip.io/lotes-inventario-api/api/v1/inventario\",\n  \"urlApiMarcasComerciales\": \"http://consulta-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io/consulta-marcas-comerciales-api/api/v1\",\n  \"urlApiMovimientos\": \"http://vacunas-movimientos.oc-vacunas.10.200.201.76.nip.io/vacunas-movimientos/api/v1/movimientos\",\n  \"urlApiProductosInmunizacion\": \"http://consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io/consulta-productos-inmunizacion-api/api/v1\",\n  \"urlApiReaccionesAdversas\": \"http://reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io/reacciones-adversas-api/api/v1\",\n  \"urlApiEstructura\": \"http://vacunas-estructura-api.oc-vacunas.10.200.201.76.nip.io/vacunas-estructura-api/api/v1\"\n}"
+configMapFrontExtra: "{\n  \"urlApiLotes\": \"http://tipos-lotes-api.oc-vacunas.10.200.201.76.nip.io/tipos-lotes-api/api/v1\",\n  \"urlApiAlergiasYContraindicacionesS039\": \"http://consulta-alergias-contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/consulta-alergias-contraindicaciones-api/api/v1\",\n  \"urlApiConfigAccionVacunal\": \"http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1\",\n  \"urlApiConfigCalendarios\": \"http://calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io/calendario-vacunal-api/api/v1\",\n  \"urlApiConfigPacientes\": \"http://configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io/configuracion-de-paciente-api/api/v1\",\n  \"urlApiContraindicaciones\": \"http://contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/contraindicaciones-api/api/v1\",\n  \"urlApiCriterio\": \"http://criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io/criterios-vacunacion-paciente-api/api/v1\",\n  \"urlApiFichaVacunal\": \"http://ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io/ficha-vacunal-api/api/v1\",\n  \"urlApiInventarioLotes\": \"http://lotes-inventario-api.oc-vacunas.10.200.201.76.nip.io/lotes-inventario-api/api/v1/inventario\",\n  \"urlApiMarcasComerciales\": \"http://consulta-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io/consulta-marcas-comerciales-api/api/v1\",\n  \"urlApiMovimientos\": \"http://vacunas-movimientos.oc-vacunas.10.200.201.76.nip.io/vacunas-movimientos/api/v1/movimientos\",\n  \"urlApiProductosInmunizacion\": \"http://consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io/consulta-productos-inmunizacion-api/api/v1\",\n  \"urlApiReaccionesAdversas\": \"http://reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io/reacciones-adversas-api/api/v1\",\n  \"urlApiEstructura\": \"http://vacunas-estructura-api.oc-vacunas.10.200.201.76.nip.io/vacunas-estructura-api/api/v1\"\n}"

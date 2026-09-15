@@ -1,0 +1,36 @@
+spec:
+  name: "vacunas-sincronizador-lotes"
+  version: "1.0.0"
+  image:
+    pullPolicy: "Always"
+    name: "vacunas-sincronizador-lotes"
+    tag: "1.0.0.1-SNAPSHOT"
+  # Sin coordinacion entre instancias: las dos replicas leerian la misma fila
+  # de cursor (ID_SYNC=1) y se pisarian. Mantener en 1.
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+  service:
+    port: 9080
+  container:
+    port: 9080
+  ingress:
+    enabled: true
+  # El micro NO expone API: su clase Application de JAX-RS no registra ningun
+  # recurso y todo el trabajo lo dispara el scheduler. Solo se enrutan health y
+  # metrics, que es lo unico que responde.
+  trafficManagement:
+    ruleSet:
+      - name: "route-to-metrics"
+        prefix: "/vacunas-sincronizador-lotes/metrics"
+        urlRewrite: "/metrics"
+      - name: "route-to-health"
+        prefix: "/vacunas-sincronizador-lotes/health"
+        urlRewrite: "/health"
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    configMap: ~
