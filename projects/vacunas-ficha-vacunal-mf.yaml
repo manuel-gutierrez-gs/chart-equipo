@@ -1,0 +1,35 @@
+spec:
+  name: "vacunas-ficha-vacunal-mf"
+  version: "1.0.0"
+  image:
+    pullPolicy: "Always"
+    name: "vacunas-ficha-vacunal-mf"
+    tag: "1.0.0.1"
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+  service:
+    port: 8080
+  container:
+    port: 8080
+  ingress:
+    enabled: true
+  trafficManagement:
+    ruleSet:
+      - name: "route-to-service"
+        prefix: "/microfrontales/sas/vacunas-ficha-vacunal-mf"
+        urlRewrite: "/"
+  corsPolicy: ~
+  authentication:
+    enabled: false
+  authorization:
+    enabled: false
+  environment:
+    configMap: ~

@@ -1407,6 +1407,74 @@ projects:
     image:
       pullPolicy: Always
     imageTag: 1.0.0.1-SNAPSHOT
+- configFile: projects/vacunas-administracion-mf.yaml
+  spec:
+    type: front
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    ingress:
+      enabled: true
+      host: "vacunas-front.oc-vacunas.10.200.201.76.nip.io"
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        URL_API_ACCIONES_VACUNALES: http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1
+    volumeMounts:
+    - name: config-volume
+      mountPath: /usr/share/nginx/html/environments-configmap.json
+      subPath: environments-configmap.json
+    - name: config-volume-extra
+      mountPath: /usr/share/nginx/html/config-maps.json
+      subPath: config-maps.json
+    volumes:
+    - name: config-volume
+      configMap:
+        name: config-map-front
+    - name: config-volume-extra
+      configMap:
+        name: config-map-front-extra
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1
+- configFile: projects/vacunas-ficha-vacunal-mf.yaml
+  spec:
+    type: front
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    ingress:
+      enabled: true
+      host: "vacunas-front.oc-vacunas.10.200.201.76.nip.io"
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        URL_API_ACCIONES_VACUNALES: http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1
+    volumeMounts:
+    - name: config-volume
+      mountPath: /usr/share/nginx/html/environments-configmap.json
+      subPath: environments-configmap.json
+    - name: config-volume-extra
+      mountPath: /usr/share/nginx/html/config-maps.json
+      subPath: config-maps.json
+    volumes:
+    - name: config-volume
+      configMap:
+        name: config-map-front
+    - name: config-volume-extra
+      configMap:
+        name: config-map-front-extra
+    image:
+      pullPolicy: Always
+    imageTag: 1.0.0.1
 front:
   spec: {}
 api:
