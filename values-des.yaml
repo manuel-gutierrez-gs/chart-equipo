@@ -90,7 +90,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -143,7 +143,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -172,7 +172,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-comunidades-autonomas-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -205,7 +205,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -241,7 +241,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -273,7 +273,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -305,7 +305,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -386,7 +386,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: indicadores-vacunacion-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -417,7 +417,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-alergias-contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -450,7 +450,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: tipos-lotes-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -485,7 +485,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -514,7 +514,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-motivos-no-vacunacion-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -547,7 +547,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-motivos-vacunacion-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -580,7 +580,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: consulta-pacientes-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -614,7 +614,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -643,7 +643,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: propuesta-vacunal-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -672,7 +672,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-provincias-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -701,7 +701,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -730,7 +730,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-sexos-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -764,7 +764,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: sincronizador-acciones-vacunales-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -855,7 +855,7 @@ projects:
         memory: 512Mi
     ingress:
       enabled: true
-      host: vacunas-sincronizador-configuracion-pacientes.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -891,7 +891,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: sincronizador-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -936,7 +936,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: sincronizador-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -985,7 +985,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: enviar-ficheros-sivain-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
       environment:
         configMap:
@@ -1033,7 +1033,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-ficheros-sivain-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
       environment:
         configMap:
@@ -1081,7 +1081,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: consulta-vacunaciones-sivain-global-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
       environment:
         configMap:
@@ -1119,7 +1119,7 @@ projects:
         memory: 768Mi
     ingress:
       enabled: true
-      host: consulta-vacunaciones-sivain-andalucia-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -1154,7 +1154,7 @@ projects:
         memory: 256Mi
     ingress:
       enabled: true
-      host: consulta-vias-administracion-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -1217,6 +1217,10 @@ projects:
   spec:
     type: microservicio
     imageTag: 1.0.0.1-SNAPSHOT
+    ingress:
+      enabled: true
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
+      gateway: oc-vacunas-gateway
     environment:
       configMap:
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
@@ -1261,6 +1265,10 @@ projects:
   spec:
     type: microservicio
     imageTag: 1.0.0.1-SNAPSHOT
+    ingress:
+      enabled: true
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
+      gateway: oc-vacunas-gateway    
     environment:
       configMap:
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
@@ -1308,7 +1316,7 @@ projects:
     imageTag: 1.0.0.1
     ingress:
       enabled: true
-      host: vacunas-estructura-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -1331,7 +1339,7 @@ projects:
     imageTag: 1.0.0.1
     ingress:
       enabled: true
-      host: lotes-inventario-api.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -1365,7 +1373,7 @@ projects:
         memory: 512Mi
     ingress:
       enabled: true
-      host: vacunas-sincronizador-lotes.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       secrets:
@@ -1393,6 +1401,10 @@ projects:
 - configFile: projects/vacunas-sincronizador-movimientos.yaml
   spec:
     type: microservicio
+    ingress:
+      enabled: true
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
+      gateway: oc-vacunas-gateway    
     environment:
       secrets:
         DATABASE_URL: jdbc:oracle:thin:@10.200.128.5/bd11r202
@@ -1419,7 +1431,7 @@ projects:
         memory: 128Mi
     ingress:
       enabled: true
-      host: "vacunas-front.oc-vacunas.10.200.201.76.nip.io"
+      host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -1453,7 +1465,7 @@ projects:
         memory: 128Mi
     ingress:
       enabled: true
-      host: "vacunas-front.oc-vacunas.10.200.201.76.nip.io"
+      host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
@@ -1479,5 +1491,5 @@ front:
   spec: {}
 api:
   spec: {}
-configMapFront: "{\n  \"urlApiLotes\": \"http://tipos-lotes-api.oc-vacunas.10.200.201.76.nip.io/tipos-lotes-api/api/v1\",\n  \"urlApiAlergiasYContraindicacionesS039\": \"http://consulta-alergias-contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/consulta-alergias-contraindicaciones-api/api/v1\",\n  \"urlApiConfigAccionVacunal\": \"http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1\",\n  \"urlApiConfigCalendarios\": \"http://calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io/calendario-vacunal-api/api/v1\",\n  \"urlApiConfigPacientes\": \"http://configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io/configuracion-de-paciente-api/api/v1\",\n  \"urlApiContraindicaciones\": \"http://contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/contraindicaciones-api/api/v1\",\n  \"urlApiCriterio\": \"http://criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io/criterios-vacunacion-paciente-api/api/v1\",\n  \"urlApiFichaVacunal\": \"http://ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io/ficha-vacunal-api/api/v1\",\n  \"urlApiInventarioLotes\": \"http://lotes-inventario-api.oc-vacunas.10.200.201.76.nip.io/lotes-inventario-api/api/v1/inventario\",\n  \"urlApiMarcasComerciales\": \"http://consulta-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io/consulta-marcas-comerciales-api/api/v1\",\n  \"urlApiMovimientos\": \"http://vacunas-movimientos.oc-vacunas.10.200.201.76.nip.io/vacunas-movimientos/api/v1/movimientos\",\n  \"urlApiProductosInmunizacion\": \"http://consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io/consulta-productos-inmunizacion-api/api/v1\",\n  \"urlApiReaccionesAdversas\": \"http://reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io/reacciones-adversas-api/api/v1\",\n  \"urlApiEstructura\": \"http://vacunas-estructura-api.oc-vacunas.10.200.201.76.nip.io/vacunas-estructura-api/api/v1\"\n}"
-configMapFrontExtra: "{\n  \"urlApiLotes\": \"http://tipos-lotes-api.oc-vacunas.10.200.201.76.nip.io/tipos-lotes-api/api/v1\",\n  \"urlApiAlergiasYContraindicacionesS039\": \"http://consulta-alergias-contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/consulta-alergias-contraindicaciones-api/api/v1\",\n  \"urlApiConfigAccionVacunal\": \"http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1\",\n  \"urlApiConfigCalendarios\": \"http://calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io/calendario-vacunal-api/api/v1\",\n  \"urlApiConfigPacientes\": \"http://configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io/configuracion-de-paciente-api/api/v1\",\n  \"urlApiContraindicaciones\": \"http://contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/contraindicaciones-api/api/v1\",\n  \"urlApiCriterio\": \"http://criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io/criterios-vacunacion-paciente-api/api/v1\",\n  \"urlApiFichaVacunal\": \"http://ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io/ficha-vacunal-api/api/v1\",\n  \"urlApiInventarioLotes\": \"http://lotes-inventario-api.oc-vacunas.10.200.201.76.nip.io/lotes-inventario-api/api/v1/inventario\",\n  \"urlApiMarcasComerciales\": \"http://consulta-marcas-comerciales-api.oc-vacunas.10.200.201.76.nip.io/consulta-marcas-comerciales-api/api/v1\",\n  \"urlApiMovimientos\": \"http://vacunas-movimientos.oc-vacunas.10.200.201.76.nip.io/vacunas-movimientos/api/v1/movimientos\",\n  \"urlApiProductosInmunizacion\": \"http://consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io/consulta-productos-inmunizacion-api/api/v1\",\n  \"urlApiReaccionesAdversas\": \"http://reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io/reacciones-adversas-api/api/v1\",\n  \"urlApiEstructura\": \"http://vacunas-estructura-api.oc-vacunas.10.200.201.76.nip.io/vacunas-estructura-api/api/v1\"\n}"
+configMapFront: "{\n  \"urlApiLotes\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/tipos-lotes-api/api/v1\",\n  \"urlApiAlergiasYContraindicacionesS039\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/consulta-alergias-contraindicaciones-api/api/v1\",\n  \"urlApiConfigAccionVacunal\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/accion-vacunal-api/api/v1\",\n  \"urlApiConfigCalendarios\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/calendario-vacunal-api/api/v1\",\n  \"urlApiConfigPacientes\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/configuracion-de-paciente-api/api/v1\",\n  \"urlApiContraindicaciones\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/contraindicaciones-api/api/v1\",\n  \"urlApiCriterio\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/criterios-vacunacion-paciente-api/api/v1\",\n  \"urlApiFichaVacunal\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/ficha-vacunal-api/api/v1\",\n  \"urlApiInventarioLotes\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/lotes-inventario-api/api/v1/inventario\",\n  \"urlApiMarcasComerciales\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/consulta-marcas-comerciales-api/api/v1\",\n  \"urlApiMovimientos\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/vacunas-movimientos/api/v1/movimientos\",\n  \"urlApiProductosInmunizacion\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/consulta-productos-inmunizacion-api/api/v1\",\n  \"urlApiReaccionesAdversas\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/reacciones-adversas-api/api/v1\",\n  \"urlApiEstructura\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/vacunas-estructura-api/api/v1\"\n}"
+configMapFrontExtra: "{\n  \"urlApiLotes\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/tipos-lotes-api/api/v1\",\n  \"urlApiAlergiasYContraindicacionesS039\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/consulta-alergias-contraindicaciones-api/api/v1\",\n  \"urlApiConfigAccionVacunal\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/accion-vacunal-api/api/v1\",\n  \"urlApiConfigCalendarios\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/calendario-vacunal-api/api/v1\",\n  \"urlApiConfigPacientes\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/configuracion-de-paciente-api/api/v1\",\n  \"urlApiContraindicaciones\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/contraindicaciones-api/api/v1\",\n  \"urlApiCriterio\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/criterios-vacunacion-paciente-api/api/v1\",\n  \"urlApiFichaVacunal\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/ficha-vacunal-api/api/v1\",\n  \"urlApiInventarioLotes\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/lotes-inventario-api/api/v1/inventario\",\n  \"urlApiMarcasComerciales\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/consulta-marcas-comerciales-api/api/v1\",\n  \"urlApiMovimientos\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/vacunas-movimientos/api/v1/movimientos\",\n  \"urlApiProductosInmunizacion\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/consulta-productos-inmunizacion-api/api/v1\",\n  \"urlApiReaccionesAdversas\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/reacciones-adversas-api/api/v1\",\n  \"urlApiEstructura\": \"https://vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io/vacunas-estructura-api/api/v1\"\n}"

@@ -14,8 +14,6 @@ spec:
     port: 9080
   ingress:
     enabled: true
-    host: "notificar-actualizacion-estado-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io"
-    gateway: oc-vacunas-gateway
   trafficManagement:
     ruleSet:
       - name: "route-to-openapi"

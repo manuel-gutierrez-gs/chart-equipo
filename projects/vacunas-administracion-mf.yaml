@@ -23,6 +23,12 @@ spec:
     enabled: true
   trafficManagement:
     ruleSet:
+      - name: "redirect-trailing-slash"
+        exact: "/microfrontales/sas/vacunas-administracion-mf"
+        redirect: "/microfrontales/sas/vacunas-administracion-mf/"
+      - name: "route-to-health"
+        prefix: "/microfrontales/sas/vacunas-administracion-mf/health"
+        urlRewrite: "/health"
       - name: "route-to-service"
         prefix: "/microfrontales/sas/vacunas-administracion-mf"
         urlRewrite: "/"

@@ -22,8 +22,6 @@ spec:
       memory: "1Gi"
   ingress:
     enabled: true
-    host: "vacunas-sincronizador-movimientos.oc-vacunas.10.200.201.76.nip.io"
-    gateway: oc-vacunas-gateway
   trafficManagement:
     ruleSet:
       - name: "route-to-openapi"

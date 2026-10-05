@@ -22,7 +22,12 @@ spec:
     - uri:
         exact: {{ .exact }}
     {{- end }}
-    {{- if ne .urlRewrite "" }}
+    {{- if .redirect }}
+    {{- /* redirect y route son excluyentes en Istio: la regla responde 301 y no llega al servicio */}}
+    redirect:
+      uri: {{ .redirect }}
+    {{- else }}
+    {{- if .urlRewrite }}
     rewrite:
       uri: {{ .urlRewrite }}
     {{- end }}
@@ -31,12 +36,11 @@ spec:
         host: {{ $.Generic.name }}-service
         port:
           number: {{ required "Parameter service.port cannot be empty or null" $.Generic.service.port }}
+    {{- end }}
     {{- if $.Generic.corsPolicy }}
     corsPolicy:
-{{ toYaml $.Generic.corsPolicy | indent 6 }}
+    {{- toYaml $.Generic.corsPolicy | indent 6 -}}
     {{- end }}
   {{- end }}
-
----
-
+--- 
 {{- end }}
