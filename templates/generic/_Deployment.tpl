@@ -35,13 +35,13 @@ spec:
       {{- end }}
       tolerations:
         - key: "workload-class"
-         operator: "Equal"
-         value: "spotbase"
-         effect: "NoSchedule"
-       - key: "kubernetes.azure.com/scalesetpriority"
-         operator: "Equal"
-         value: "spot"
-         effect: "NoSchedule"
+          operator: "Equal"
+          value: "spotbase"
+          effect: "NoSchedule"
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
       nodeSelector:
         workload-class: spotbase
       hostAliases:
