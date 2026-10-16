@@ -332,7 +332,7 @@ projects:
     type: front
     ingress:
       enabled: true
-      host: vacunas-app-mf.oc-vacunas.10.200.201.76.nip.io
+      host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:

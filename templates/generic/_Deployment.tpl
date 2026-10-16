@@ -34,12 +34,16 @@ spec:
         - name: {{ .Generic.imagePullSecret }}
       {{- end }}
       tolerations:
-        - key: "kubernetes.azure.com/scalesetpriority"
-          operator: "Equal"
-          value: "spot"
-          effect: "NoSchedule"
+        - key: "workload-class"
+         operator: "Equal"
+         value: "spotbase"
+         effect: "NoSchedule"
+       - key: "kubernetes.azure.com/scalesetpriority"
+         operator: "Equal"
+         value: "spot"
+         effect: "NoSchedule"
       nodeSelector:
-        kubernetes.azure.com/scalesetpriority: spot
+        workload-class: spotbase
       hostAliases:
       # Balanceador interno SAS al que apuntan los 4 hosts. IP confirmada
       # con curl --resolve desde el namespace oc-vacunas: HTTP 200/403
