@@ -13,3 +13,12 @@ metadata:
 data:
  config-maps.json: {{ .Values.configMapFrontExtra | quote }}
 {{- end }}
+{{- if .Values.configMapFrontLotes }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-front-lotes
+data:
+  environments-configmap.json: {{ .Values.configMapFrontLotes | quote }}
+{{- end }}
