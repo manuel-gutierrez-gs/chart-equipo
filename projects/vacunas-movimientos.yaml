@@ -4,6 +4,7 @@ spec:
   image:
     pullPolicy: Always
     name: vacunas-movimientos
+  imageTag: "1.0.0.1-SNAPSHOT-gestion-lotes.20261109"
   replicaCount: 1
   usage_level: low
   autoscaling:

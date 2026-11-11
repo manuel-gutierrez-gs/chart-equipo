@@ -1,10 +1,10 @@
 spec:
-  name: "vacunas-estructura-api"
+  name: vacunas-estructura-api
   version: "1.0.0"
   image:
-    pullPolicy: "Always"
-    name: "vacunas-estructura-api"
-    tag: "1.0.0.1"
+    pullPolicy: Always
+    name: vacunas-estructura-api
+  imageTag: "1.0.0.1-build-20261104"
   replicaCount: 1
   autoscaling:
     enabled: false
