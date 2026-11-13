@@ -4,7 +4,7 @@ spec:
   image:
     pullPolicy: Always
     name: consulta-marcas-comerciales-api
-  imageTag: "1.0.1.1-SNAPSHOT-build-20261104"
+  imageTag: "1.0.1.1-SNAPSHOT-build-20261112"
   replicaCount: 1
   autoscaling:
     enabled: false

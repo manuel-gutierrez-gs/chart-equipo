@@ -92,6 +92,16 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/acciones/*']
+          methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       configMap:
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
@@ -452,6 +462,16 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/lotes/*']
+          methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       configMap:
         MOVIMIENTOS_CLIENT_MP_REST_BASE_URL: http://vacunas-movimientos-service.oc-vacunas.svc.cluster.local:9080/api/v1
@@ -484,6 +504,19 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/marcas-comerciales/*']
+          methods: ['GET']
+          scopes: ~
+        - paths: ['/api/v1/formatos/*']
+          methods: ['GET']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       secrets:
         DB_URL_MC: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
@@ -610,6 +643,16 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/productos-inmunizacion/*']
+          methods: ['GET']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       secrets:
         DB_URL_PI: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
@@ -1211,6 +1254,16 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/movimientos/*']
+          methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       configMap:
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
@@ -1305,6 +1358,25 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/areas/*']
+          methods: ['GET']
+          scopes: ~
+        - paths: ['/api/v1/centros/*']
+          methods: ['GET']
+          scopes: ~
+        - paths: ['/api/v1/distritos/*']
+          methods: ['GET']
+          scopes: ~
+        - paths: ['/api/v1/unidades-funcionales/*']
+          methods: ['GET']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       secrets:
         DATABASE_URL: jdbc:oracle:thin:@10.200.128.5:1521/bd11r202
@@ -1325,6 +1397,16 @@ projects:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
+    authentication:
+      enabled: true
+    authorization:
+      enabled: true
+      policies:
+        - paths: ['/api/v1/inventario/*']
+          methods: ['GET']
+          scopes: ~
+      preflight:
+        paths: ['/api/v1*']
     environment:
       secrets:
         DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02

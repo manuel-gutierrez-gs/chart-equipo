@@ -4,7 +4,7 @@ spec:
   image:
     pullPolicy: Always
     name: consulta-productos-inmunizacion-api
-  imageTag: "1.0.2.1-build-20261104"
+  imageTag: "1.0.2.1-build-20261112"
   replicaCount: 1
   autoscaling:
     enabled: false

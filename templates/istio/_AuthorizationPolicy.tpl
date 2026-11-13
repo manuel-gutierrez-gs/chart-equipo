@@ -37,7 +37,17 @@ spec:
     - operation:
         paths: 
         - "/health*"
+        - "/metrics*"
         methods: 
         - "GET"
+    {{- if and .Generic.authorization.preflight .Generic.authorization.preflight.paths }}
+    - operation:
+        paths:
+        {{- range $path := $.Generic.authorization.preflight.paths }}
+        - {{ $path | quote }}
+        {{- end }}
+        methods: 
+        - "OPTIONS"
+    {{- end }}
 ---
 {{- end }}
