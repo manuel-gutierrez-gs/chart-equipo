@@ -2,9 +2,9 @@ spec:
   name: "consulta-vacunaciones-sivain-global-api"
   version: "1.0.0"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "consulta-vacunaciones-sivain-global-api"
-    tag: "1.0.0.2"
+    pullPolicy: IfNotPresent
+    name: consulta-vacunaciones-sivain-global-api
+    tag: 1.0.0.2
   replicaCount: 1
   autoscaling:
     enabled: false

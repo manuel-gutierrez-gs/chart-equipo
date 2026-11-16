@@ -1,10 +1,10 @@
 spec:
   name: "vacunas-sincronizador-configuracion-pacientes"
-  version: "0.0.0"
+  version: "1.0.0"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "vacunas-sincronizador-configuracion-pacientes"
-    tag: "0.0.0.1"
+    pullPolicy: IfNotPresent
+    name: vacunas-sincronizador-configuracion-pacientes
+    tag: 1.0.0.1-SNAPSHOT
   replicaCount: 1
   autoscaling:
     enabled: false
@@ -22,9 +22,6 @@ spec:
       - name: "route-to-health"
         prefix: "/vacunas-sincronizador-configuracion-pacientes/health"
         urlRewrite: "/health"
-      - name: "route-to-service"
-        prefix: "/vacunas-sincronizador-configuracion-pacientes/api/v1"
-        urlRewrite: "/api/v1"
   corsPolicy: ~
   authentication:
     enabled: false

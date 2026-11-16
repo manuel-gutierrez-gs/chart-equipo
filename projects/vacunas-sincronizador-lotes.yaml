@@ -2,9 +2,9 @@ spec:
   name: "vacunas-sincronizador-lotes"
   version: "1.0.0"
   image:
-    pullPolicy: "Always"
-    name: "vacunas-sincronizador-lotes"
-    tag: "1.0.0.1-SNAPSHOT"
+    pullPolicy: IfNotPresent
+    name: vacunas-sincronizador-lotes
+    tag: 1.0.0.1-SNAPSHOT
   # Sin coordinacion entre instancias: las dos replicas leerian la misma fila
   # de cursor (ID_SYNC=1) y se pisarian. Mantener en 1.
   replicaCount: 1

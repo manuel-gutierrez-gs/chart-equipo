@@ -1,10 +1,10 @@
 spec:
   name: "contraindicaciones-api"
-  version: "1.0.1"
+  version: "1.0.2"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "contraindicaciones-api"
-    tag: "1.0.1.2"
+    pullPolicy: Always
+    name: contraindicaciones-api
+    tag: 1.0.2.1-build-20261116
   replicaCount: 1
   autoscaling:
     enabled: false

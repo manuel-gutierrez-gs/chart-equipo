@@ -2,9 +2,9 @@ spec:
   name: "consulta-alergias-contraindicaciones-api"
   version: "1.0.0"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "consulta-alergias-contraindicaciones-api"
-    tag: "1.0.0.2"
+    pullPolicy: Always
+    name: consulta-alergias-contraindicaciones-api
+    tag: 1.0.0.2
   replicaCount: 1
   autoscaling:
     enabled: false

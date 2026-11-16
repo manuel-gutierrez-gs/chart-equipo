@@ -2,9 +2,9 @@ spec:
   name: "notificar-actualizacion-estado-inmunizacion-api"
   version: "1.0.0"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "notificar-actualizacion-estado-inmunizacion-api"
-    tag: "0.0.0.1"
+    pullPolicy: IfNotPresent
+    name: notificar-actualizacion-estado-inmunizacion-api
+    tag: 1.0.0.1-SNAPSHOT
   replicaCount: 1
   autoscaling:
     enabled: false

@@ -1,9 +1,10 @@
 spec:
   name: lotes-inventario-ingesta-api
-  version: "develop-0"
+  version: "1.0.0"
   image:
     pullPolicy: Always
     name: lotes-inventario-ingesta-api
+    tag: 1.0.0.1-SNAPSHOT
   replicaCount: 1
   usage_level: low
   autoscaling:

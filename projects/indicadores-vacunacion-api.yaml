@@ -1,9 +1,10 @@
 spec:
-  name: indicadores-vacunacion-api
+  name: "indicadores-vacunacion-api"
   version: "1.0.0"
   image:
     pullPolicy: IfNotPresent
     name: indicadores-vacunacion-api
+    tag: 1.0.0.1-SNAPSHOT
   replicaCount: 1
   usage_level: low
   autoscaling:

@@ -2,9 +2,9 @@ spec:
   name: "propuesta-vacunal-api"
   version: "1.0.0"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "propuesta-vacunal-api"
-    tag: "1.0.0.2"
+    pullPolicy: Always
+    name: propuesta-vacunal-api
+    tag: 1.0.0.2
   replicaCount: 1
   autoscaling:
     enabled: false

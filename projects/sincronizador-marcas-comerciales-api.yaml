@@ -2,9 +2,9 @@ spec:
   name: "sincronizador-marcas-comerciales-api"
   version: "1.0.0"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "sincronizador-marcas-comerciales-api"
-    tag: "1.0.0.2"
+    pullPolicy: IfNotPresent
+    name: sincronizador-marcas-comerciales-api
+    tag: 1.0.0.2
   replicaCount: 1
   autoscaling:
     enabled: false

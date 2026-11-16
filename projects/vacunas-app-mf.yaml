@@ -2,9 +2,9 @@ spec:
   name: "vacunas-app-mf"
   version: "1.0.2"
   image:
-    pullPolicy: "IfNotPresent"
-    name: "vacunas-app-mf"
-    tag: "1.0.2.2"
+    pullPolicy: Always
+    name: vacunas-app-mf
+    tag: 1.0.2.11-fix-historico
   replicaCount: 1
   autoscaling:
     enabled: false
