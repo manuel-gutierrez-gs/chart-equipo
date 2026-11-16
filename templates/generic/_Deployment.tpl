@@ -88,42 +88,12 @@ spec:
         {{- end }}
         {{- end }}
         resources:
-          {{- if eq .Generic.usage_level "low" }}
-          requests:
-            cpu: {{ .Generic.usageSpec.low.resources.requests.cpu }}
-            memory: {{ .Generic.usageSpec.low.resources.requests.memory }}
-          limits:
-            cpu: {{ .Generic.usageSpec.low.resources.limits.cpu }}
-            memory: {{ .Generic.usageSpec.low.resources.limits.memory }}
-          {{- else if eq .Generic.usage_level "medium" }}
-          requests:
-            cpu: {{ .Generic.usageSpec.medium.resources.requests.cpu }}
-            memory: {{ .Generic.usageSpec.medium.resources.requests.memory }}
-          limits:
-            cpu: {{ .Generic.usageSpec.medium.resources.limits.cpu }}
-            memory: {{ .Generic.usageSpec.medium.resources.limits.memory }}
-          {{- else if eq .Generic.usage_level "high" }}
-          requests:
-            cpu: {{ .Generic.usageSpec.high.resources.requests.cpu }}
-            memory: {{ .Generic.usageSpec.high.resources.requests.memory }}
-          limits:
-            cpu: {{ .Generic.usageSpec.high.resources.limits.cpu }}
-            memory: {{ .Generic.usageSpec.high.resources.limits.memory }}
-          {{- else if eq .Generic.usage_level "very_high" }}
-          requests:
-            cpu: {{ .Generic.usageSpec.very_high.resources.requests.cpu }}
-            memory: {{ .Generic.usageSpec.very_high.resources.requests.memory }}
-          limits:
-            cpu: {{ .Generic.usageSpec.very_high.resources.limits.cpu }}
-            memory: {{ .Generic.usageSpec.very_high.resources.limits.memory }}
-          {{- else }}
           requests:
             cpu: {{ .Generic.resources.requests.cpu }}
             memory: {{ .Generic.resources.requests.memory }}
           limits:
             cpu: {{ .Generic.resources.limits.cpu }}
             memory: {{ .Generic.resources.limits.memory }}
-          {{- end}}
         {{- if .Generic.readinessProbe }}
         readinessProbe:
 {{ toYaml .Generic.readinessProbe | indent 10 }}
