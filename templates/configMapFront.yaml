@@ -22,3 +22,12 @@ metadata:
 data:
   environments-configmap.json: {{ .Values.configMapFrontLotes | quote }}
 {{- end }}
+{{- if .Values.configMapFrontAdministracion }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-front-administracion
+data:
+  environments-configmap.json: {{ .Values.configMapFrontAdministracion | quote }}
+{{- end }}

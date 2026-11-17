@@ -89,11 +89,4 @@
     {{- include "generic.istio.VirtualService" $pkg }}
   {{- end }}
   
-  {{- if and $spec.authentication $spec.authentication.enabled }}
-    {{- include "generic.istio.RequestAuthentication" $pkg }}
-  {{- end }}
-  
-  {{- if and $spec.authorization $spec.authorization.enabled }}
-    {{- include "generic.istio.AuthorizationPolicy" $pkg }}
-  {{- end }}
 {{- end }}
