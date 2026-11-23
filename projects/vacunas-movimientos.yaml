@@ -2,42 +2,34 @@ spec:
   name: "vacunas-movimientos"
   version: "1.0.0"
   image:
-    pullPolicy: Always
-    name: vacunas-movimientos
-    tag: 1.0.0.1-SNAPSHOT-build-20261112
+    pullPolicy: "Always"
+    name: "vacunas-movimientos"
+    tag: "1.0.0.1-SNAPSHOT-build-20261112"
   replicaCount: 1
-  usage_level: low
   autoscaling:
     enabled: false
   service:
     port: 9080
-    sas_monitoring: false
   container:
     port: 9080
   ingress:
     enabled: true
   trafficManagement:
     ruleSet:
-      - name: "route-to-openapi"
-        prefix: "/vacunas-movimientos/openapi"
-        urlRewrite: "/openapi"
-      - name: "route-to-openapi-absoluto"
-        # Sin urlRewrite a proposito: la Swagger UI redirige a /openapi/ui/ y pide /openapi
-        # con ruta absoluta, ya sin el prefijo del micro. Esta regla las acepta tal cual.
-        prefix: "/openapi"
-        urlRewrite: ""
-      - name: "route-to-metrics"
-        prefix: "/vacunas-movimientos/metrics"
-        urlRewrite: "/metrics"
-      - name: "route-to-health"
-        prefix: "/vacunas-movimientos/health"
-        urlRewrite: "/health"
-      - name: "route-to-service"
-        prefix: "/vacunas-movimientos/api/v1"
-        urlRewrite: "/api/v1"
+    - name: "route-to-metrics"
+      prefix: "/vacunas-movimientos/metrics"
+      urlRewrite: "/metrics"
+    - name: "route-to-health"
+      prefix: "/vacunas-movimientos/health"
+      urlRewrite: "/health"
+    - name: "route-to-service"
+      prefix: "/vacunas-movimientos/api/v1"
+      urlRewrite: "/api/v1"
   corsPolicy: ~
   authentication:
     enabled: false
   authorization:
     enabled: false
   environment:
+    configMap: ~
+    secrets: ~

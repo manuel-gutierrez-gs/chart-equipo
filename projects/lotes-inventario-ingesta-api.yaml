@@ -1,21 +1,32 @@
 spec:
-  name: lotes-inventario-ingesta-api
+  name: "lotes-inventario-ingesta-api"
   version: "1.0.0"
   image:
-    pullPolicy: Always
-    name: lotes-inventario-ingesta-api
-    tag: 1.0.0.1-SNAPSHOT
+    pullPolicy: "Always"
+    name: "lotes-inventario-ingesta-api"
+    tag: "1.0.0.1-SNAPSHOT"
   replicaCount: 1
-  usage_level: low
   autoscaling:
     enabled: false
   service:
-    sas_monitoring: false
+    port: 9080
+  container:
+    port: 9080
   ingress:
-    # El micro es un consumer puro de Kafka, no expone REST. Sin VirtualService.
     enabled: false
+  trafficManagement:
+    ruleSet:
+    - name: "route-to-metrics"
+      prefix: "/lotes-inventario-ingesta-api/metrics"
+      urlRewrite: "/metrics"
+    - name: "route-to-health"
+      prefix: "/lotes-inventario-ingesta-api/health"
+      urlRewrite: "/health"
+  corsPolicy: ~
   authentication:
     enabled: false
   authorization:
     enabled: false
   environment:
+    configMap: ~
+    secrets: ~

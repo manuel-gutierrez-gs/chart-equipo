@@ -2,19 +2,12 @@ spec:
   name: "vacunas-ficha-vacunal-mf"
   version: "1.0.0"
   image:
-    pullPolicy: Always
-    name: vacunas-ficha-vacunal-mf
-    tag: 1.0.0.1
+    pullPolicy: "Always"
+    name: "vacunas-ficha-vacunal-mf"
+    tag: "1.0.0.1"
   replicaCount: 1
   autoscaling:
     enabled: false
-  resources:
-    requests:
-      cpu: "50m"
-      memory: "64Mi"
-    limits:
-      cpu: "200m"
-      memory: "128Mi"
   service:
     port: 8080
   container:
@@ -23,15 +16,15 @@ spec:
     enabled: true
   trafficManagement:
     ruleSet:
-      - name: "redirect-trailing-slash"
-        exact: "/microfrontales/sas/vacunas-ficha-vacunal-mf"
-        redirect: "/microfrontales/sas/vacunas-ficha-vacunal-mf/"
-      - name: "route-to-health"
-        prefix: "/microfrontales/sas/vacunas-ficha-vacunal-mf/health"
-        urlRewrite: "/health"
-      - name: "route-to-service"
-        prefix: "/microfrontales/sas/vacunas-ficha-vacunal-mf"
-        urlRewrite: "/"
+    - name: "redirect-trailing-slash"
+      exact: "/microfrontales/sas/vacunas-ficha-vacunal-mf"
+      redirect: "/microfrontales/sas/vacunas-ficha-vacunal-mf/"
+    - name: "route-to-health"
+      prefix: "/microfrontales/sas/vacunas-ficha-vacunal-mf/health"
+      urlRewrite: "/health"
+    - name: "route-to-service"
+      prefix: "/microfrontales/sas/vacunas-ficha-vacunal-mf"
+      urlRewrite: "/"
   corsPolicy: ~
   authentication:
     enabled: false
@@ -39,3 +32,4 @@ spec:
     enabled: false
   environment:
     configMap: ~
+    secrets: ~

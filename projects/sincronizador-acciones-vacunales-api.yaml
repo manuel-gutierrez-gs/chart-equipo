@@ -2,9 +2,9 @@ spec:
   name: "sincronizador-acciones-vacunales-api"
   version: "1.0.0"
   image:
-    pullPolicy: Always
-    name: sincronizador-acciones-vacunales-api
-    tag: 1.0.0.1-SNAPSHOT
+    pullPolicy: "Always"
+    name: "sincronizador-acciones-vacunales-api"
+    tag: "1.0.0.1-SNAPSHOT"
   replicaCount: 1
   autoscaling:
     enabled: false
@@ -16,12 +16,12 @@ spec:
     enabled: true
   trafficManagement:
     ruleSet:
-      - name: "route-to-metrics"
-        prefix: "/sincronizador-acciones-vacunales-api/metrics"
-        urlRewrite: "/metrics"
-      - name: "route-to-health"
-        prefix: "/sincronizador-acciones-vacunales-api/health"
-        urlRewrite: "/health"
+    - name: "route-to-metrics"
+      prefix: "/sincronizador-acciones-vacunales-api/metrics"
+      urlRewrite: "/metrics"
+    - name: "route-to-health"
+      prefix: "/sincronizador-acciones-vacunales-api/health"
+      urlRewrite: "/health"
   corsPolicy: ~
   authentication:
     enabled: false
@@ -29,3 +29,4 @@ spec:
     enabled: false
   environment:
     configMap: ~
+    secrets: ~

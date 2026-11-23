@@ -2,9 +2,9 @@ spec:
   name: "configuracion-de-paciente-api"
   version: "1.0.3"
   image:
-    pullPolicy: Always
-    name: configuracion-de-paciente-api
-    tag: 1.0.3.1-SNAPSHOT
+    pullPolicy: "Always"
+    name: "configuracion-de-paciente-api"
+    tag: "1.0.3.1-SNAPSHOT"
   replicaCount: 1
   autoscaling:
     enabled: false
@@ -16,14 +16,6 @@ spec:
     enabled: true
   trafficManagement:
     ruleSet:
-    - name: "route-to-openapi"
-      prefix: "/configuracion-de-paciente-api/openapi"
-      urlRewrite: "/openapi"
-    - name: "route-to-openapi-absoluto"
-      # Sin urlRewrite a proposito: la Swagger UI redirige a /openapi/ui/ y pide /openapi
-      # con ruta absoluta, ya sin el prefijo del micro. Esta regla las acepta tal cual.
-      prefix: "/openapi"
-      urlRewrite: ""
     - name: "route-to-metrics"
       prefix: "/configuracion-de-paciente-api/metrics"
       urlRewrite: "/metrics"
@@ -40,3 +32,4 @@ spec:
     enabled: false
   environment:
     configMap: ~
+    secrets: ~
