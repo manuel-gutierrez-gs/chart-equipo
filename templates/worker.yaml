@@ -62,7 +62,7 @@
   {{- end }}
   
   {{- /* Construir la imagen */ -}}
-  {{ $imageBase := printf "%s:%s" $spec.image.name ($spec.imageTag | default "latest") }}
+  {{ $imageBase := printf "%s:%s" $spec.image.name ($spec.image.tag | default "latest") }}
   {{ $imagePath := printf "%s/%s/%s" $global.registry.dns $global.registry.path $imageBase }}
   
   {{- /* Se define el diccionario para pasarlo como contexto */ -}}
