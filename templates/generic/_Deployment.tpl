@@ -22,6 +22,7 @@ spec:
         app: {{ .Generic.name }}
         version: {{ .Generic.version }}
       annotations:
+        checksum/environment: {{ (.Generic.environment | default dict) | toJson | sha256sum | quote }}
         sidecar.istio.io/inject: "true"
         sidecar.istio.io/proxyCPU: "50m"
         sidecar.istio.io/proxyMemory: "50Mi"
@@ -34,22 +35,23 @@ spec:
         - name: {{ .Generic.imagePullSecret }}
       {{- end }}
       tolerations:
-        - key: "workload-class"
-          operator: "Equal"
-          value: "spotbase"
-          effect: "NoSchedule"
-        - key: "kubernetes.azure.com/scalesetpriority"
-          operator: "Equal"
-          value: "spot"
-          effect: "NoSchedule"
+      - key: "kubernetes.azure.com/scalesetpriority"
+        operator: "Equal"
+        value: "spot"
+        effect: "NoSchedule"
+      - key: "workload"
+        operator: "Equal"
+        value: "oc-vacunas"
+        effect: "NoSchedule"
       nodeSelector:
-        workload-class: spotbase
+        kubernetes.azure.com/scalesetpriority: "spot"
+        workload: "oc-vacunas"
       hostAliases:
       # Balanceador interno SAS al que apuntan los 4 hosts. IP confirmada
       # con curl --resolve desde el namespace oc-vacunas: HTTP 200/403
       # en milisegundos a los 4 hostnames (wsbdu, maco, estructura,
       # comun.centrales). La IP del CoreDNS (10.200.1.5) NO responde
-      # — era un typo del .45 perdiendo el 4.
+      # - era un typo del .45 perdiendo el 4.
       - ip: "10.200.1.45"
         hostnames:
         - "maco.diraya.des"
