@@ -45,12 +45,12 @@ microservicio:
 front:
   spec:
     resources:
-      requests:
-        cpu: "50m"
-        memory: "700Mi"
       limits:
-        cpu: "1"
-        memory: "2Gi"
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
     service:
       port: 8080
     container:
@@ -63,11 +63,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -87,6 +87,8 @@ projects:
         paths: ['/api/v1*']
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
@@ -122,11 +124,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: '2'
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -145,6 +147,9 @@ projects:
       preflight:
         paths: ['/api/v1*']
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
         DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
         DB_USER: APP_VAC_CALENDARIOS
@@ -156,10 +161,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -167,6 +172,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         comunidades_autonomas_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
         comunidades_autonomas_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/codesystem/comunidades_autonomas
         comunidades_autonomas_cache_enabled: true
@@ -181,10 +188,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -192,6 +199,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         calendarios_client_mp_rest_url: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         criterios_client_mp_rest_url: http://criterios-vacunacion-paciente-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         pacientes_client_mp_rest_url: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
@@ -209,20 +218,20 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
-        DB_URL_COIN: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
-        DB_USER_COIN: APP_VAC_CONTRAINDICACIONES
-        DB_PASSWORD_COIN: APP_VAC_CONTRAINDICACIONES
         DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
         DB_USER: APP_VAC_CONTRAINDICACIONES
         DB_PASSWORD: APP_VAC_CONTRAINDICACIONES
@@ -233,16 +242,19 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
         DB_URL_CR: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
         DB_USER_CR: APP_VAC_CRITERIOS
@@ -257,17 +269,19 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         acciones_vacunales_client_mp_rest_url: http://accion-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         propuestas_vacunales_client_mp_rest_url: http://propuesta-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
@@ -281,44 +295,6 @@ projects:
         usuario_generico_vacunas_login: usugenvac
         usuario_generico_vacunas_modulo_maco: 257
         usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
-- configFile: projects/vacunas-app-mf.yaml
-  spec:
-    type: front
-    ingress:
-      enabled: true
-      host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
-      gateway: oc-vacunas-gateway
-    environment:
-      configMap:
-        URL_API_ACCIONES_VACUNALES: http://accion-vacunal-api.oc-vacunas.10.200.201.76.nip.io/accion-vacunal-api/api/v1
-        URL_API_CONFIG_PACIENTES: http://configuracion-de-paciente-api.oc-vacunas.10.200.201.76.nip.io/configuracion-de-paciente-api/api/v1
-        URL_API_FICHA_VACUNAL: http://ficha-vacunal-api.oc-vacunas.10.200.201.76.nip.io/ficha-vacunal-api/api/v1
-        URL_API_CONFIG_CALENDARIOS: http://calendario-vacunal-api.oc-vacunas.10.200.201.76.nip.io/calendario-vacunal-api/api/v1
-        URL_API_REACCIONES_ADVERSAS: http://reacciones-adversas-api.oc-vacunas.10.200.201.76.nip.io/reacciones-adversas-api/api/v1
-        URL_API_CONTRAINDICACIONES: http://contraindicaciones-api.oc-vacunas.10.200.201.76.nip.io/contraindicaciones-api/api/v1
-        URL_API_PRODUCTOS_INMUNIZACION: http://consulta-productos-inmunizacion-api.oc-vacunas.10.200.201.76.nip.io/consulta-productos-inmunizacion-api/api/v1
-        URL_API_CRITERIO: http://criterios-vacunacion-paciente-api.oc-vacunas.10.200.201.76.nip.io/criterios-vacunacion-paciente-api/api/v1
-    volumeMounts:
-    - name: config-volume
-      mountPath: /usr/share/nginx/html/environments-configmap.json
-      subPath: environments-configmap.json
-    - name: config-volume-extra
-      mountPath: /usr/share/nginx/html/config-maps.json
-      subPath: config-maps.json
-    volumes:
-    - name: config-volume
-      configMap:
-        name: config-map-front
-    - name: config-volume-extra
-      configMap:
-        name: config-map-front-extra
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 125m
-        memory: 128Mi
 - configFile: projects/indicadores-vacunacion-api.yaml
   spec:
     type: microservicio
@@ -326,10 +302,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -337,6 +313,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         acciones_vacunales_client_mp_rest_url: http://accion-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         pacientes_client_mp_rest_url: http://consulta-pacientes-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         propuestas_vacunales_client_mp_rest_url: http://propuesta-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
@@ -348,10 +326,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -359,6 +337,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         s039_endpoint: http://his-esb.pre.sas.junta-andalucia.es/csp/his/sas.ghi.servicio.S039.cls
         macoAuth_pre_endpoint: http://maco.diraya.des/wscentralizada/WsValidacion.asmx
       secrets:
@@ -373,11 +353,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -397,6 +377,8 @@ projects:
         paths: ['/api/v1*']
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         MOVIMIENTOS_CLIENT_MP_REST_BASE_URL: http://vacunas-movimientos-service.oc-vacunas.svc.cluster.local:9080/api/v1
         MARCAS_CLIENT_MP_REST_URL: http://consulta-marcas-comerciales-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
       secrets:
@@ -413,10 +395,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -442,10 +424,14 @@ projects:
       preflight:
         paths: ['/api/v1*']
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
-        DB_URL_MC: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
-        DB_USER_MC: APP_VAC_MARCAS_COMERCIALES
-        DB_PASSWORD_MC: APP_VAC_MARCAS_COMERCIALES
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_MARCAS_COMERCIALES
+        DB_PASSWORD: APP_VAC_MARCAS_COMERCIALES
+        DB_DEFAULT_SCHEMA: OWN_VAC_MARCAS_COMERCIALES
 - configFile: projects/consulta-motivos-no-vacunacion-api.yaml
   spec:
     type: microservicio
@@ -453,10 +439,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -464,6 +450,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         motivos_no_vacunacion_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=
         motivos_no_vacunacion_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/SIVAIN_MOTIVOS_NO_VAC/$expand?includeDesignations=1
         motivos_no_vacunacion_cache_enabled: true
@@ -478,10 +466,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -489,6 +477,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         motivos_vacunacion_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=codigoSNOMEDCT
         motivos_vacunacion_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/SIVAIN_MOTIVOS_VAC/$expand?includeDesignations=1
         motivos_vacunacion_cache_enabled: true
@@ -503,11 +493,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -519,6 +509,8 @@ projects:
         usuario_generico_vacunas_login: usugenvac
         usuario_generico_vacunas_password_md5: 98DEC823E6A8F530E495A3093AE6CE5B
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         bdu_search_endpoint: http://wsbdu.diraya.des/web_services/UsuarioBDU.wsdl?wsdl
         pacientes_cache_enabled: true
         pacientes_cache_ttl: PT24H
@@ -530,10 +522,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -553,10 +545,13 @@ projects:
       preflight:
         paths: ['/api/v1*']
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
-        DB_URL_PI: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
-        DB_USER_PI: APP_VAC_PROD_INMUNIZACION
-        DB_PASSWORD_PI: APP_VAC_PROD_INMUNIZACION
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_PROD_INMUNIZACION
+        DB_PASSWORD: APP_VAC_PROD_INMUNIZACION
 - configFile: projects/propuesta-vacunal-api.yaml
   spec:
     type: microservicio
@@ -564,17 +559,19 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         calendarios_client_mp_rest_url: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
         configuracion_pacientes_client_mp_rest_url: http://configuracion-de-paciente-api-service.oc-vacunas.svc.cluster.local:9080/api/v1
 - configFile: projects/consulta-provincias-api.yaml
@@ -584,16 +581,19 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
       gateway: oc-vacunas-gateway
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
         DB_URL_PROV: jdbc:oracle:thin:@10.200.128.5:1521/bd11r202
         DB_USER_PROV: OWN_VACUNAS
@@ -605,31 +605,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
-        memory: 256Mi
-    ingress:
-      enabled: true
-      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
-      gateway: oc-vacunas-gateway
-    environment:
-      secrets:
-        DB_URL_RA: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
-        DB_USER_RA: APP_VAC_REACCIONES_ADVERSAS
-        DB_PASSWORD_RA: APP_VAC_REACCIONES_ADVERSAS
-- configFile: projects/consulta-sexos-api.yaml
-  spec:
-    type: microservicio
-    autoscaling:
-      enabled: false
-    resources:
-      limits:
-        cpu: 1
-        memory: 1Gi
-      requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -637,6 +616,32 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
+      secrets:
+        DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
+        DB_USER: APP_VAC_REACCIONES_ADVERSAS
+        DB_PASSWORD: APP_VAC_REACCIONES_ADVERSAS
+- configFile: projects/consulta-sexos-api.yaml
+  spec:
+    type: microservicio
+    autoscaling:
+      enabled: false
+    resources:
+      limits:
+        cpu: 200m
+        memory: 1Gi
+      requests:
+        cpu: 50m
+        memory: 256Mi
+    ingress:
+      enabled: true
+      host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
+      gateway: oc-vacunas-gateway
+    environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         sexos_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=
         sexos_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/900000201000122108/$expand?includeDesignations=1
         sexos_terminologias_base_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
@@ -652,11 +657,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -683,6 +688,8 @@ projects:
         DATABASE_USERAV: APP_VAC_ACCIONES_VACUNALES
         DATABASE_PASSAV: APP_VAC_ACCIONES_VACUNALES
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         macoAuth_pre_endpoint: http://ws-maco-pre.diraya-test.sspa.junta-andalucia.es/wscentralizada/WsValidacion.asmx?wsdl
         SINCRONIZADOR_DIARIO_HORA: 1
         SINCRONIZADOR_DIARIO_MINUTO: 0
@@ -735,11 +742,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
-        memory: 2Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -753,6 +760,8 @@ projects:
         DATABASE_USERCP: APP_VAC_CONFIG_PACIENTES
         DATABASE_PASSCP: APP_VAC_CONFIG_PACIENTES
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         calendarios_client_mp_rest_url: http://calendario-vacunal-api-service.oc-vacunas.svc.cluster.local:9080
         criterios_client_mp_rest_url: http://criterios-vacunacion-paciente-api-service.oc-vacunas.svc.cluster.local:9080
         SINCRONIZADOR_NUMERO_REGISTROS: '30000'
@@ -763,11 +772,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -782,6 +791,8 @@ projects:
         DB_USER: APP_VAC_MARCAS_COMERCIALES
         DB_PASSWORD: APP_VAC_MARCAS_COMERCIALES
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         listados_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
         hora_ejecucion: 1
         minutos_ejecucion: 0
@@ -800,11 +811,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 2
-        memory: 3Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 768Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -819,6 +830,8 @@ projects:
         DB_USER: APP_VAC_PROD_INMUNIZACION
         DB_PASSWORD: APP_VAC_PROD_INMUNIZACION
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         listados_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2
         hora_ejecucion: 1
         minutos_ejecucion: 0
@@ -841,10 +854,10 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
+        cpu: 50m
         memory: 256Mi
     ingress:
       enabled: true
@@ -852,6 +865,8 @@ projects:
       gateway: oc-vacunas-gateway
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         vias_administracion_detalle_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/CodeSystem/$lookup?system=http://snomed.info/sct&code=
         vias_administracion_listado_terminologias_mp_rest_url: http://terminologias-des.pre.sas.junta-andalucia.es/api/v2/ValueSet/SIVAIN_VIAS_ADMINISTRACION/$expand?includeDesignations=1
         vias_administracion_cache_enabled: true
@@ -864,6 +879,8 @@ projects:
     type: microservicio
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
@@ -894,11 +911,11 @@ projects:
           path: aks-kafka-cluster-ca-cert.crt
     resources:
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 125m
-        memory: 128Mi
+        cpu: 50m
+        memory: 256Mi
 - configFile: projects/vacunas-movimientos.yaml
   spec:
     type: microservicio
@@ -921,6 +938,8 @@ projects:
         paths: ['/api/v1*']
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
@@ -951,11 +970,11 @@ projects:
           path: aks-kafka-cluster-ca-cert.crt
     resources:
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 125m
-        memory: 128Mi
+        cpu: 50m
+        memory: 256Mi
 - configFile: projects/notificar-actualizacion-estado-inmunizacion-api.yaml
   spec:
     type: microservicio
@@ -965,6 +984,8 @@ projects:
       gateway: oc-vacunas-gateway    
     environment:
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SECURITY_PROTOCOL: SASL_SSL
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
         MP_MESSAGING_CONNECTOR_LIBERTY_KAFKA_SSL_TRUSTSTORE_TYPE: PEM
@@ -996,11 +1017,11 @@ projects:
           path: aks-kafka-cluster-ca-cert.crt
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 250m
-        memory: 384Mi
+        cpu: 50m
+        memory: 256Mi
 - configFile: projects/vacunas-estructura-api.yaml
   spec:
     type: microservicio
@@ -1040,16 +1061,20 @@ projects:
       preflight:
         paths: ['/api/v1*']
     environment:
+      configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
       secrets:
-        DATABASE_URL: jdbc:oracle:thin:@10.200.128.5:1521/bd11r202
-        DATABASE_USER: APP_VACUNAS
-        DATABASE_PASS: APP_VACUNAS
+        DB_URL: jdbc:oracle:thin:@10.200.128.5:1521/bd11r202
+        DB_USER: APP_VACUNAS
+        DB_PASSWORD: APP_VACUNAS
+        DB_DEFAULT_SCHEMA: OWN_VACUNAS
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 125m
+        cpu: 50m
         memory: 256Mi
 - configFile: projects/lotes-inventario-api.yaml
   spec:
@@ -1072,6 +1097,10 @@ projects:
       preflight:
         paths: ['/api/v1*']
     environment:
+      configMap:
+        CODIGO_LOCALIZACION_SSCC: "01190"
+        MINILOGIN_ISSUER: "https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin"
+        MINILOGIN_JWKS_URI: "https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs"
       secrets:
         DB_URL: jdbc:oracle:thin:@10.200.128.4:1522/bd19c02
         DB_USER: APP_VAC_INVENTARIO_LOTES
@@ -1081,10 +1110,10 @@ projects:
         DB_PASSWORD_IL: APP_VAC_INVENTARIO_LOTES
     resources:
       limits:
-        cpu: 1
+        cpu: 200m
         memory: 1Gi
       requests:
-        cpu: 125m
+        cpu: 50m
         memory: 256Mi
 - configFile: projects/vacunas-sincronizador-lotes.yaml
   spec:
@@ -1093,11 +1122,11 @@ projects:
       enabled: false
     resources:
       limits:
-        cpu: 1
-        memory: 2Gi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -1111,6 +1140,8 @@ projects:
         DATABASE_USERL: APP_VAC_LOTES
         DATABASE_PASSL: APP_VAC_LOTES
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         SINCRONIZADOR_EJECUTARALARRANCAR: 'true'
         SINCRONIZADOR_DIARIO_HORA: '1'
         SINCRONIZADOR_DIARIO_MINUTO: '0'
@@ -1124,6 +1155,13 @@ projects:
 - configFile: projects/vacunas-sincronizador-movimientos.yaml
   spec:
     type: microservicio
+    resources:
+      limits:
+        cpu: 200m
+        memory: 1Gi
+      requests:
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-api.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -1137,17 +1175,19 @@ projects:
         DB_USER: OWN_VAC_MOVIMIENTOS
         DB_PASSWORD: OWN_VAC_MOVIMIENTOS
       configMap:
+        MINILOGIN_ISSUER: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin
+        MINILOGIN_JWKS_URI: https://minilogin-keycloak.76fdcdb29b7441b68067.westeurope.aksapp.io/realms/minilogin/protocol/openid-connect/certs
         WLP_LOGGING_CONSOLE_LOGLEVEL: INFO
 - configFile: projects/vacunas-administracion-mf.yaml
   spec:
     type: front
     resources:
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 125m
-        memory: 128Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -1168,11 +1208,11 @@ projects:
     type: front
     resources:
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 125m
-        memory: 128Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
@@ -1199,11 +1239,11 @@ projects:
     type: front
     resources:
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 200m
+        memory: 1Gi
       requests:
-        cpu: 125m
-        memory: 128Mi
+        cpu: 50m
+        memory: 256Mi
     ingress:
       enabled: true
       host: vacunas-front.76fdcdb29b7441b68067.westeurope.aksapp.io
